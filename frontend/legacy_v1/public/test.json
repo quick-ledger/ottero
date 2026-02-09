@@ -1,0 +1,40 @@
+{
+  "schema": {
+    "type": "object",
+    "title": "ll",
+    "required": [
+      "ii",
+      "oo"
+    ],
+    "properties": {
+      "ii": {
+        "type": "object",
+        "required": [
+          "value"
+        ],
+        "properties": {
+          "value": {
+            "type": "string",
+            "description": "ii"
+          }
+        },
+        "description": "ii"
+      },
+      "oo": {
+        "type": "object",
+        "required": [
+          "value"
+        ],
+        "properties": {
+          "value": {
+            "type": "number",
+            "default": 66,
+            "description": "oo"
+          }
+        },
+        "description": "oo"
+      }
+    },
+    "description": "ll"
+  }
+}

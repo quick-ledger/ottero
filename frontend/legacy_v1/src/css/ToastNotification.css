@@ -1,0 +1,17 @@
+/* ToastNotification.css */
+.toast-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    pointer-events: none; /* Prevents the container from blocking clicks */
+}
+
+.toast-container .toast {
+    pointer-events: auto; /* Allows the toast itself to be clickable */
+}

@@ -1,0 +1,15 @@
+.customer-link-row {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.customer-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.customer-link-row:hover {
+  background-color: #f0f0f0;
+}

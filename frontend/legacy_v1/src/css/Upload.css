@@ -1,0 +1,48 @@
+/* Upload.css */
+.upload-container {
+  width: 200px;
+  height: 200px;
+  border: 1px dashed gray;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  flex-direction: column; /* Ensure vertical alignment */
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.logo-image {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain; /* Ensure the image maintains its aspect ratio */
+}
+
+.upload-label {
+  cursor: pointer;
+  color: gray;
+  font-size: 14px;
+  text-align: center;
+  margin-bottom: 10px; /* Add some space between the label and the button */
+}
+
+.file-input {
+  display: none; /* Hide the default file input */
+}
+
+.custom-upload-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 16px;
+  margin-top: 10px; /* Add some space between the label and the button */
+}
+
+.custom-upload-button:hover {
+  background-color: #0056b3;
+}

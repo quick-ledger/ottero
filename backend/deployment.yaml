@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: outtero
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: outtero
+  template:
+    metadata:
+      labels:
+        app: outtero
+    spec:
+      containers:
+        - name: outtero
+          image: ghcr.io/outtero/outtero-service:latest
+          ports:
+            - containerPort: 8080

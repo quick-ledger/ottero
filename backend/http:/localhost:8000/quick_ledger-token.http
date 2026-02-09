@@ -1,0 +1,15 @@
+# RG: Just set the following environment variables and run the collection
+# client_id_env
+# client_secret_env
+# username_env
+# password_env
+# use cleanHttpRequests.sh script in root folder to clean the requests older than 7 min
+### create token
+POST https://auth.quickledger.net/realms/QuickLedger/protocol/openid-connect/token
+Host: auth.quickledger.net
+Content-Type: application/x-www-form-urlencoded
+
+client_id={{client_id_env}}&client_secret={{client_secret_env}}&username={{username_env}}&password={{password_env}}&grant_type=password
+
+> {% client.global.set("access_token", response.body.access_token); %}
+

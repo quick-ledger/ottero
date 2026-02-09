@@ -1,0 +1,17 @@
+
+###
+GET http://localhost:8080/api/users/1
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+###
+PUT http://localhost:8080/api/users/1
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+{
+  "defaultCompany": {
+    "id": 1
+  }
+}
+

@@ -1,0 +1,22 @@
+"ppv": [
+          {
+            "asset_id": "566457",  // This is actually the event Id, NOT the value client send to play service.
+            "applicable_to": [
+              "kayo"
+            ],
+            "subscription_type": "not_itunes",
+            "subscription_number": "A-S11194518",
+            "products": "750",
+            "updated_at": "2022-08-31T02:53:14.542Z",
+            "specification": {
+              "quality": "all",
+              "stream_count": 1,
+              "download_to_devices": 2
+            },
+            "validity": {
+              "updated_at": "2022-08-23T08:15:01.750Z",
+              "start_date": "",
+              "end_date": "Mandatory"
+            }
+          }
+        ]

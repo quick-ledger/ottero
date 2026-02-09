@@ -1,0 +1,9 @@
+
+###
+GET http://localhost:8080/api/companies/12/serviceItems
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+###
+
+

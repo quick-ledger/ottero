@@ -1,0 +1,26 @@
+.quote-edit li {
+    cursor: pointer;
+}
+
+.quote-edit li:hover {
+    background-color: yellow; /* Change this to your desired highlight color */
+}
+
+
+
+.row {
+    display: flex;
+    align-items: center;
+    gap: 20px; /* Adjust the gap between elements as needed */
+    margin-bottom: 20px;
+}
+
+.dropdown-list {
+    position: absolute;
+    z-index: 1;
+    background-color: lightgray;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+

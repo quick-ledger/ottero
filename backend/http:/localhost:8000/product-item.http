@@ -1,0 +1,19 @@
+### GET request to example server
+GET http://localhost:8080/api/companies/12/products
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+
+###
+POST http://localhost:8080/api/companies/12/products
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+{
+  "name": "product 1",
+  "description": "product 1 description",
+  "price": 100,
+  "companyId": 12,
+  "quantity": 10
+
+}

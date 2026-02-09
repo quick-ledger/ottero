@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Quote</title>
+    <style>
+        body {
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .container {
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .header {
+            width: 100%;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .company-details {
+            float: left;
+            width: 50%;
+        }
+
+        .quote-details {
+            float: right;
+            text-align: right;
+            width: 50%;
+        }
+
+        .client-section {
+            margin-top: 30px;
+            margin-bottom: 30px;
+        }
+
+        .client-section h3 {
+            border-bottom: 2px solid #eee;
+            padding-bottom: 5px;
+            margin-bottom: 10px;
+            color: #555;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th {
+            background-color: #f8f9fa;
+            color: #333;
+            font-weight: bold;
+            text-align: left;
+            padding: 10px;
+            border-bottom: 2px solid #ddd;
+        }
+
+        td {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .totals {
+            margin-top: 20px;
+            float: right;
+            width: 40%;
+        }
+
+        .totals-row {
+            padding: 5px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .totals-row.final {
+            font-size: 16px;
+            font-weight: bold;
+            border-top: 2px solid #333;
+            border-bottom: none;
+            padding-top: 10px;
+        }
+
+        .footer {
+            margin-top: 50px;
+            text-align: center;
+            font-size: 12px;
+            color: #777;
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <table style="border:none; margin:0; width:100%;">
+                <tr>
+                    <td style="border:none; padding:0; vertical-align:top;">
+                        <div class="company-details">
+                            <div th:if="${companyLogoBase64}" style="margin-bottom: 15px;">
+                                <img th:src="'data:' + ${companyLogoContentType} + ';base64,' + ${companyLogoBase64}"
+                                    alt="Company Logo"
+                                    th:style="'width: ' + (${logoWidth} ?: '150') + 'px; height: auto; display: block;'" />
+                            </div>
+                            <h1 th:text="${company.name}">Company Name</h1>
+                            <div th:text="${company.address}">Address</div>
+                            <div th:if="${company.email}" th:text="${company.email}">email@company.com</div>
+                            <div th:if="${company.phone}" th:text="${company.phone}">123456789</div>
+                            <div th:if="${company.ABN}">ABN: <span th:text="${company.ABN}">123</span></div>
+                        </div>
+                    </td>
+                    <td style="border:none; padding:0; vertical-align:top; text-align:right;">
+                        <div class="quote-details">
+                            <h1 style="color:#666;">QUOTE</h1>
+                            <div><strong>Quote #:</strong> <span th:text="${quote.quoteNumber}">Q-101</span></div>
+                            <div><strong>Date:</strong> <span th:text="${quote.quoteDate}">2023-01-01</span></div>
+                            <div><strong>Expiry:</strong> <span th:text="${quote.expiryDate}">2023-02-01</span></div>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="client-section">
+            <h3>Quote For:</h3>
+            <div th:if="${quote.client.entityName}" style="font-weight:bold;" th:text="${quote.client.entityName}">
+                Client Entity</div>
+            <div>
+                <span th:text="${quote.client.contactName}">First</span> <span
+                    th:text="${quote.client.contactSurname}">Last</span>
+            </div>
+            <div th:if="${quote.client.email}" th:text="${quote.client.email}">client@email.com</div>
+            <div th:if="${quote.client.phone}" th:text="${quote.client.phone}">0400000000</div>
+            <div th:if="${quote.client.address}" th:text="${quote.client.address}">Client Address</div>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Description</th>
+                    <th class="text-right">Qty</th>
+                    <th class="text-right">Price</th>
+                    <th class="text-right">GST</th>
+                    <th class="text-right">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="item : ${quote.quoteItems}">
+                    <td th:text="${item.itemDescription}">Item Description</td>
+                    <td class="text-right" th:text="${item.quantity}">1</td>
+                    <td class="text-right"
+                        th:text="'$' + ${#numbers.formatDecimal(item.price, 1, 'COMMA', 2, 'POINT')}">$100.00</td>
+                    <td class="text-right" th:text="${item.gst == 0 ? '0%' : '10%'}">10%</td>
+                    <td class="text-right"
+                        th:text="'$' + ${#numbers.formatDecimal(item.total, 1, 'COMMA', 2, 'POINT')}">$110.00</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="totals">
+            <table style="width:100%; margin-top:0;">
+                <tr>
+                    <td style="border:none; padding:5px; text-align:right;"><strong>Subtotal (Ex GST):</strong></td>
+                    <td style="border:none; padding:5px; text-align:right;"
+                        th:text="'$' + ${#numbers.formatDecimal(quote.totalPrice - quote.gst, 1, 'COMMA', 2, 'POINT')}">
+                        $1000.00</td>
+                </tr>
+                <tr th:if="${quote.discountValue != null && quote.discountValue > 0}">
+                    <td style="border:none; padding:5px; text-align:right;"><strong>Discount:</strong></td>
+                    <td style="border:none; padding:5px; text-align:right;">
+                        <span th:if="${quote.discountType == 'DOLLAR'}">-<span
+                                th:text="'$' + ${#numbers.formatDecimal(quote.discountValue, 1, 'COMMA', 2, 'POINT')}"></span></span>
+                        <span th:if="${quote.discountType == 'PERCENT'}">-<span
+                                th:text="${#numbers.formatDecimal(quote.discountValue, 1, 'COMMA', 2, 'POINT')} + '%'"></span></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="border:none; padding:5px; text-align:right;"><strong>GST:</strong></td>
+                    <td style="border:none; padding:5px; text-align:right;"
+                        th:text="'$' + ${#numbers.formatDecimal(quote.gst, 1, 'COMMA', 2, 'POINT')}">$100.00</td>
+                </tr>
+                <tr style="border-top: 2px solid #333;">
+                    <td style="border:none; padding:10px 5px; text-align:right; font-size:16px; font-weight:bold;">
+                        Total:</td>
+                    <td style="border:none; padding:10px 5px; text-align:right; font-size:16px; font-weight:bold;"
+                        th:text="'$' + ${#numbers.formatDecimal(quote.totalPrice, 1, 'COMMA', 2, 'POINT')}">$1100.00
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div style="clear:both;"></div>
+
+        <div class="client-section" th:if="${quote.notes}">
+            <h3>Notes:</h3>
+            <p th:text="${quote.notes}">Additional notes here.</p>
+        </div>
+
+        <div class="footer">
+            <p>Thank you for your business!</p>
+            <div th:if="${company.bankBsb}">
+                <strong>Payment Details:</strong><br />
+                BSB: <span th:text="${company.bankBsb}"></span> | Account: <span
+                    th:text="${company.bankAccount}"></span>
+            </div>
+            <div class="footer-note" style="margin-top: 10px; font-size: 11px; color: #888;">
+                <p th:if="${paymentTerms}" th:text="${paymentTerms}"></p>
+                <p>This quote was generated by QuickLedger.</p>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

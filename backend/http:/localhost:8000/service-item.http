@@ -1,0 +1,12 @@
+### GET request to example server
+GET http://localhost:8080/api/companies/12/service_items
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+###
+GET http://localhost:8080/api/companies/12/service_items/13
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+
+

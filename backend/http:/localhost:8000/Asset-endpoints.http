@@ -1,0 +1,32 @@
+###
+POST http://localhost:8080/api/companies/{{companyId}}/assets
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+{
+  "name": "FamilyPipe",
+  "assetDescription": "Asset Description",
+  "purchasePrice": 100.00,
+  "salePrice": 150.00,
+  "quantity": 10,
+  "unit": "PIECES",
+  "assetTax": 10.00,
+  "status": "ACTIVE",
+  "attributeValues": [
+    {
+      "definition": {
+        "id": "NumberOfWife"
+      },
+      "value": "45"
+    },
+    {
+      "definition": {
+        "id": "NumberOfChildren"
+      },
+      "value": "5"
+    }
+  ]
+}
+
+
+<> 2024-05-02T170555.200.json

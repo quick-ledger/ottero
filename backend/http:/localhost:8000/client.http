@@ -1,0 +1,35 @@
+
+###
+GET http://localhost:8080/api/companies/1/clients
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+
+###
+GET http://localhost:8080/api/companies/17/clients/58
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+###
+GET http://localhost:8080/api/companies/1/clients/search?firstname=compa
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+
+###
+POST http://localhost:8080/api/companies/1/clients
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+{
+"firstName": "another",
+"lastName": "another",
+"email": "rrrr",
+"phone": "04088888",
+  "companyId": 1
+}
+
+###
+GET http://localhost:8080/api/companies/1/clients/search?email=reza&contactSurname=Company
+Content-Type: application/json
+Authorization: Bearer {{access_token}}

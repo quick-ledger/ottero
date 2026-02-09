@@ -1,0 +1,9 @@
+###
+POST http://localhost:8080/api/companies/10/quotes/validate-token
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+{
+  "token": "eyJhbGciOiJIUzI1NiJ9.eyJjb21wYW55SWQiOjEwLCJjbGllbnRJZCI6MiwidXNlcklkIjoxLCJxdW90ZUlkIjo0OSwic3ViIjoicXVvdGUtYXBwcm92YWwiLCJpYXQiOjE3MjE0NTYzNTIsImV4cCI6MTcyMjA2MTE1Mn0.jyUtb_0WBolNus5Kn_fXXBIUqnoKQ3yPPPtfa7I-rOQ"
+}
+###

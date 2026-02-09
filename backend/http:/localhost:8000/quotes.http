@@ -1,0 +1,82 @@
+
+###
+POST http://localhost:8080/api/companies/12/quotes
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+{
+  "quoteNumber": "",
+  "quoteDate": "2024-08-31",
+  "expiryDate": "2024-09-30",
+  "discountType": "DOLLAR",
+  "discountValue": 0,
+  "totalPrice": 55,
+  "gst": "0.00",
+  "clientId": 44,
+  "clientFirstname": "",
+  "clientLastname": "",
+  "clientEntityName": "",
+  "clientPhone": "",
+  "clientEmail": "",
+  "status": "DRAFT",
+  "notes": "",
+  "quoteRevision": 0,
+  "quoteItems": [
+    {
+      "itemDescription": "kkkk",
+      "quantity": 1,
+      "price": "55",
+      "total": "55.00",
+      "gst": 0,
+      "itemOrder": 1
+
+    }
+  ],
+  "companyId": 12
+}
+
+###
+GET http://localhost:8080/api/companies/1/quotes/73
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+###
+GET http://localhost:8080/api/companies/12/quotes/73/clients/1/generate-token
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+###
+POST http://localhost:8080/api/companies/12/quotes/validate-token
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+{
+  eyJhbGciOiJIUzI1NiJ9.eyJjb21wYW55SWQiOjEyLCJjbGllbnRJZCI6MSwidXNlcklkIjoxLCJxdW90ZUlkIjo3Mywic3ViIjoicXVvdGUtYXBwcm92YWwiLCJpYXQiOjE3MjQ4MzcwNjMsImV4cCI6MTcyNTQ0MTg2M30.mxcUzcdnXmXSvpa_UrXFNoaJwDkVNUGFxsz7529Qh2s"
+}
+
+
+###
+GET http://localhost:8080/api/companies/12/quotes/quotenumbers/Q1-1011/revisions/1
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+###
+GET http://localhost:8080/api/companies/12/quotes/quotenumbers/Q1-1011/revisions
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+
+###
+GET http://localhost:8080/api/companies/12/quotes/quotenumbers?lazy=true
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+###
+GET http://localhost:8080/api/companies/12/quotes/search?searchTerm=ghp
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+###
+GET http://localhost:8080/api/companies/12/quotes/quotenumbers?lazy=true&page=0&size=10
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
