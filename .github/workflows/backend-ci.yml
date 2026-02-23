@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'backend/**'
+      - '!backend/src/test/**'
       - '.github/workflows/backend-ci.yml'
   workflow_dispatch:
 

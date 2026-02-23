@@ -5,6 +5,9 @@ on:
     branches: [main]
     paths:
       - 'frontend/**'
+      - '!frontend/cypress/**'
+      - '!frontend/cypress.config.ts'
+      - '!frontend/cypress.env.json'
       - '.github/workflows/frontend-ci.yml'
   workflow_dispatch:
 
