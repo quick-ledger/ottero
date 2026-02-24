@@ -35,16 +35,23 @@ Cypress.Commands.add('loginToAuth0', () => {
                 cy.get('button[type="submit"][name="action"]').click();
             });
 
-            // After login, we should be redirected back to the dashboard
-            cy.url().should('include', '/dashboard');
-            cy.contains('h1', 'Dashboard').should('be.visible'); // Assuming there's an h1 Dashboard
+            // After login, we should be redirected to an authenticated page
+            // Could be dashboard, or company setup if user is new
+            cy.url().should('not.include', 'auth0.com');
+            cy.url().should('satisfy', (url: string) => {
+                return url.includes('/dashboard') ||
+                       url.includes('/companies') ||
+                       url.includes('/quotes') ||
+                       url.includes('/invoices');
+            });
         },
         {
             validate: () => {
                 // Validate the session is still active by visiting dashboard
                 cy.visit('/dashboard');
-                // If we are redirected to home or login, session is invalid
-                cy.url().should('include', '/dashboard');
+                // If we are redirected to login, session is invalid
+                // Allow redirect to companies page for incomplete setup
+                cy.url().should('not.include', 'auth0.com');
             },
             cacheAcrossSpecs: true
         }

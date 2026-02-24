@@ -24,6 +24,7 @@ import { Separator } from '@/components/ui/separator';
 import QuoteLineItems from './QuoteLineItems';
 import { Badge } from '@/components/ui/badge';
 import { Loader2, ArrowLeft, Save, Trash, Download, Link } from 'lucide-react';
+import { VoiceRecorder } from '@/components/voice/VoiceRecorder';
 import { toast } from 'sonner';
 import { CustomerSearch } from '@/components/quote/CustomerSearch';
 import { QuoteAttachments } from '@/components/quote/QuoteAttachments';
@@ -236,6 +237,17 @@ export default function QuoteEditPage() {
                     {/* Related Invoices Badge ... */}
                 </div>
                 <div className="flex items-center gap-2">
+                    {isNew && (
+                        <VoiceRecorder
+                            companyId={selectedCompanyId}
+                            documentType="quote"
+                            onDraftCreated={(draft) => {
+                                if (draft?.id) {
+                                    navigate(`/quotes/${draft.id}`);
+                                }
+                            }}
+                        />
+                    )}
                     <Button type="button" onClick={form.handleSubmit(onSubmit, onError)} disabled={isReadOnly}>
                         <Save className="mr-2 h-4 w-4" />
                         Save
