@@ -63,8 +63,9 @@ describe('Sign Up & Onboarding Flow', () => {
         cy.visit('/quotes/new');
 
         // Select Customer
-        cy.contains('label', 'Search Existing Client').parent().find('button').click({ force: true });
-        cy.get('[role="option"]').should('be.visible').contains('Onboarding User').click();
+        cy.get('input[placeholder*="Search client"]').type('Onboarding');
+        cy.wait(1000);
+        cy.get('[role="option"]').should('be.visible').first().click({ force: true });
 
         // Add Item
         cy.contains('button', 'Add Item').click();
