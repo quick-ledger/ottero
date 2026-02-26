@@ -24,6 +24,10 @@ echo "Step 4: Deploying Backend & Frontend..."
 kubectl apply -f 05-backend.yaml
 kubectl apply -f 06-frontend.yaml
 
+echo "Step 4b: Restarting deployments to pull latest images..."
+kubectl rollout restart deployment/ottero-backend -n ottero
+kubectl rollout restart deployment/ottero-frontend -n ottero
+
 echo "Step 5: Configuring Ingress..."
 kubectl apply -f 07-ingress.yaml
 
