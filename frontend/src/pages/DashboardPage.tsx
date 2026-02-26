@@ -2,12 +2,16 @@ import { useAppStore } from '@/store/useAppStore';
 import { useInvoices } from '@/hooks/useInvoices';
 import { useQuotes } from '@/hooks/useQuotes';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Loader2, FileText, Banknote, Plus, Users } from 'lucide-react';
+import { Loader2, FileText, Banknote, Plus, Users, BarChart3 } from 'lucide-react';
 import { useCustomers } from '@/hooks/useCustomers';
 
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
+
+import IncomeChart from '@/components/dashboard/IncomeChart';
+import OutstandingInvoicesCard from '@/components/dashboard/OutstandingInvoicesCard';
+import TopCustomersCard from '@/components/dashboard/TopCustomersCard';
 import {
     Table,
     TableBody,
@@ -195,6 +199,21 @@ export default function DashboardPage() {
                         <p className="text-xs text-muted-foreground">Active clients</p>
                     </CardContent>
                 </Card>
+            </div>
+
+            {/* Financial Reports */}
+            <div className="space-y-4">
+                <h2 className="text-xl font-semibold flex items-center gap-2">
+                    <BarChart3 className="h-5 w-5" />
+                    Financial Reports
+                </h2>
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+                    <IncomeChart companyId={selectedCompanyId} />
+                    <div className="col-span-3 grid gap-4 lg:grid-cols-3">
+                        <OutstandingInvoicesCard companyId={selectedCompanyId} />
+                        <TopCustomersCard companyId={selectedCompanyId} />
+                    </div>
+                </div>
             </div>
 
             {/* Quick Actions */}
