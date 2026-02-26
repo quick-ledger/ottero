@@ -6,6 +6,7 @@ import com.stripe.exception.StripeException;
 import com.stripe.model.*;
 import com.stripe.model.checkout.Session;
 import com.stripe.net.Webhook;
+import com.stripe.param.SubscriptionUpdateParams;
 import com.stripe.param.checkout.SessionCreateParams;
 import io.quickledger.entities.User;
 import io.quickledger.repositories.UserRepository;
@@ -559,5 +560,24 @@ public class StripeService {
             }
             throw e;
         }
+    }
+
+    /**
+     * Apply referral discount (100% off for one month) to a subscription.
+     * Requires a coupon named "referral_free_month" to be created in Stripe Dashboard:
+     * - Duration: once
+     * - Percent off: 100%
+     */
+    public void applyReferralDiscount(String stripeSubscriptionId) throws StripeException {
+        logger.info("Applying referral discount to subscription: {}", stripeSubscriptionId);
+
+        SubscriptionUpdateParams params = SubscriptionUpdateParams.builder()
+                .setCoupon("referral_free_month")
+                .build();
+
+        Subscription subscription = Subscription.retrieve(stripeSubscriptionId);
+        subscription.update(params);
+
+        logger.info("Successfully applied referral discount to subscription: {}", stripeSubscriptionId);
     }
 }

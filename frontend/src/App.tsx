@@ -24,6 +24,7 @@ const SequenceConfigPage = lazy(() => import('@/pages/settings/SequenceConfigPag
 const TemplateConfigPage = lazy(() => import('@/pages/settings/TemplateConfigPage'));
 const PricingPage = lazy(() => import('@/pages/settings/PricingPage'));
 const ProfilePage = lazy(() => import('@/pages/settings/ProfilePage'));
+const ReferralPage = lazy(() => import('@/pages/settings/ReferralPage'));
 
 const QuoteViewer = lazy(() => import('@/pages/public/QuoteViewer'));
 const InvoiceViewer = lazy(() => import('@/pages/public/InvoiceViewer'));
@@ -90,6 +91,7 @@ function App() {
                 <Route path="settings/template-config" element={<TemplateConfigPage />} />
                 <Route path="settings/pricing" element={<PricingPage />} />
                 <Route path="settings/profile" element={<ProfilePage />} />
+                <Route path="settings/referrals" element={<ReferralPage />} />
 
 
                 <Route path="quotes" element={<QuoteListPage />} />
