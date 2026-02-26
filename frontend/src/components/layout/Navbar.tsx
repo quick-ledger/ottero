@@ -56,6 +56,9 @@ const Navbar = () => {
                             <DropdownMenuItem asChild>
                                 <Link to="/settings/pricing" className="cursor-pointer">Plans & Pricing</Link>
                             </DropdownMenuItem>
+                            <DropdownMenuItem asChild>
+                                <Link to="/settings/referrals" className="cursor-pointer">Refer a Friend</Link>
+                            </DropdownMenuItem>
 
                             <DropdownMenuSeparator />
                             <DropdownMenuLabel>Your Data</DropdownMenuLabel>

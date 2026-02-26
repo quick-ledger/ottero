@@ -5,6 +5,7 @@ import io.quickledger.entities.Company;
 import io.quickledger.entities.User;
 import io.quickledger.mappers.UserMapper;
 import io.quickledger.services.CompanyService;
+import io.quickledger.services.ReferralService;
 import io.quickledger.services.UserService;
 
 import org.slf4j.Logger;
@@ -29,15 +30,17 @@ public class UserController {
 
     private final UserService userService;
     private final CompanyService companyService;
+    private final ReferralService referralService;
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @Value("${auth0.webhook.secret}")
     private String auth0WebhookSecret;
 
     @Autowired
-    public UserController(UserService userService, CompanyService companyService) {
+    public UserController(UserService userService, CompanyService companyService, ReferralService referralService) {
         this.userService = userService;
         this.companyService = companyService;
+        this.referralService = referralService;
     }
 
     @PostConstruct
@@ -127,6 +130,14 @@ public class UserController {
         company.setName(givenName + "'s Company");
         companyService.createCompanyWithUser(company, user, null);
         logger.info("Created default company for new user: {}", user.getEmail());
+
+        // Process any pending referrals for this email
+        try {
+            referralService.processReferralOnSignup(user.getEmail());
+        } catch (Exception e) {
+            logger.error("Error processing referral for new user {}: {}", user.getEmail(), e.getMessage());
+            // Don't fail the user creation if referral processing fails
+        }
 
         return ResponseEntity.status(HttpStatus.CREATED).body("User created");
     }

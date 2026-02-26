@@ -119,3 +119,14 @@ export interface PaginatedResponse<T> {
     size: number;
     number: number;
 }
+
+// Referral types
+export type ReferralStatus = 'PENDING' | 'SIGNED_UP' | 'DISCOUNT_APPLIED';
+
+export interface Referral {
+    refereeEmail: string;
+    refereeName: string | null;
+    status: ReferralStatus;
+    referralCode: string;
+    createdDate: string;
+}
