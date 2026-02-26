@@ -7,10 +7,12 @@ echo "🚀 Starting Ottero Kubernetes Deployment..."
 echo "Step 0: Installing/Verifying Cert Manager..."
 ./00-cert_manager.sh || echo "Cert-manager might already be installed"
 
-echo "Step 1: Applying Namespace and Secrets..."
+echo "Step 1: Applying Namespace..."
 kubectl apply -f 00-namespace.yaml
-kubectl apply -f 01-ghcr-secret.yaml
-kubectl apply -f 02-secrets.yaml
+# NOTE: Secrets (01-ghcr-secret.yaml, 02-secrets.yaml) contain placeholders
+# and should NOT be applied automatically. Manage secrets manually:
+#   kubectl create secret docker-registry ghcr-login ...
+#   kubectl create secret generic ottero-secrets ...
 
 echo "Step 2: Applying Configurations..."
 kubectl apply -f 09-frontend-config-prod.yaml
