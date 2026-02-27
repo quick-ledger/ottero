@@ -268,4 +268,152 @@ describe('Invoice Workflows', () => {
             cy.url().should('include', '/invoices/new');
         });
     });
+
+    describe('Recurring Invoices', () => {
+        it('should display recurring settings card', () => {
+            cy.visit('/invoices/new');
+            cy.contains('Recurring Settings').should('be.visible');
+            cy.contains('Enable Recurring').should('be.visible');
+        });
+
+        it('should enable recurring and show frequency options', () => {
+            cy.visit('/invoices/new');
+
+            // Select a customer
+            cy.get('input[placeholder*="Search client"]').type('Test');
+            cy.wait(1000);
+            cy.get('[role="option"]').first().click({ force: true });
+
+            // Toggle recurring on
+            cy.contains('Enable Recurring').parent().parent().find('button[role="switch"]').click();
+
+            // Verify frequency selector appears
+            cy.contains('Frequency').should('be.visible');
+            cy.contains('Monthly').should('be.visible');
+
+            // Verify auto-send toggle appears
+            cy.contains('Auto-send').should('be.visible');
+
+            // Verify end date field appears
+            cy.contains('End Date').should('be.visible');
+        });
+
+        it('should change recurring frequency', () => {
+            cy.visit('/invoices/new');
+
+            // Select a customer
+            cy.get('input[placeholder*="Search client"]').type('Test');
+            cy.wait(1000);
+            cy.get('[role="option"]').first().click({ force: true });
+
+            // Enable recurring
+            cy.contains('Enable Recurring').parent().parent().find('button[role="switch"]').click();
+
+            // Change frequency to Weekly
+            cy.contains('Frequency').parent().find('button[role="combobox"]').click();
+            cy.get('[role="option"]').contains('Weekly').click();
+
+            // Verify Weekly is selected
+            cy.contains('Frequency').parent().find('button[role="combobox"]').should('contain', 'Weekly');
+        });
+
+        it('should create a recurring invoice and save', () => {
+            cy.visit('/invoices/new');
+
+            // Select a customer
+            cy.get('input[placeholder*="Search client"]').type('Test');
+            cy.wait(1000);
+            cy.get('[role="option"]').first().click({ force: true });
+
+            // Add line item
+            cy.contains('button', 'Add Item').click();
+            cy.get('input[placeholder="Description"]').first().type('Recurring service');
+            cy.get('table tbody tr').first().find('input[type="number"]').eq(0).clear().type('1');
+            cy.get('table tbody tr').first().find('input[type="number"]').eq(1).clear().type('100');
+
+            // Enable recurring
+            cy.contains('Enable Recurring').parent().parent().find('button[role="switch"]').click();
+
+            // Select quarterly frequency
+            cy.contains('Frequency').parent().find('button[role="combobox"]').click();
+            cy.get('[role="option"]').contains('Quarterly').click();
+
+            // Enable auto-send
+            cy.contains('Auto-send').parent().parent().find('button[role="switch"]').click();
+
+            // Save
+            cy.contains('button', 'Save').click();
+            cy.contains('Invoice created successfully').should('be.visible');
+
+            // Verify redirect and invoice saved
+            cy.url().should('match', /\/invoices\/\d+/);
+        });
+
+        it('should show recurring icon in invoice list', () => {
+            // First create a recurring invoice
+            cy.visit('/invoices/new');
+
+            cy.get('input[placeholder*="Search client"]').type('Test');
+            cy.wait(1000);
+            cy.get('[role="option"]').first().click({ force: true });
+
+            cy.contains('button', 'Add Item').click();
+            cy.get('input[placeholder="Description"]').first().type('Recurring test');
+            cy.get('table tbody tr').first().find('input[type="number"]').eq(1).clear().type('50');
+
+            // Enable recurring
+            cy.contains('Enable Recurring').parent().parent().find('button[role="switch"]').click();
+
+            cy.contains('button', 'Save').click();
+            cy.contains('Invoice created successfully').should('be.visible');
+
+            // Go to invoice list and check for recurring icon
+            cy.visit('/invoices');
+            cy.wait(500);
+
+            // The recurring icon should be visible (RefreshCw icon with lucide-refresh-cw class)
+            cy.get('table tbody tr').first().find('svg.lucide-refresh-cw').should('exist');
+        });
+
+        it('should set recurring end date', () => {
+            cy.visit('/invoices/new');
+
+            // Select a customer
+            cy.get('input[placeholder*="Search client"]').type('Test');
+            cy.wait(1000);
+            cy.get('[role="option"]').first().click({ force: true });
+
+            // Enable recurring
+            cy.contains('Enable Recurring').parent().parent().find('button[role="switch"]').click();
+
+            // Set end date to 1 year from now
+            const endDate = new Date();
+            endDate.setFullYear(endDate.getFullYear() + 1);
+            const endDateStr = endDate.toISOString().split('T')[0];
+
+            cy.contains('End Date').parent().find('input[type="date"]').type(endDateStr);
+
+            // Verify the end date is set
+            cy.contains('End Date').parent().find('input[type="date"]').should('have.value', endDateStr);
+        });
+
+        it('should hide recurring options when toggled off', () => {
+            cy.visit('/invoices/new');
+
+            // Select a customer
+            cy.get('input[placeholder*="Search client"]').type('Test');
+            cy.wait(1000);
+            cy.get('[role="option"]').first().click({ force: true });
+
+            // Enable recurring
+            cy.contains('Enable Recurring').parent().parent().find('button[role="switch"]').click();
+            cy.contains('Frequency').should('be.visible');
+
+            // Disable recurring
+            cy.contains('Enable Recurring').parent().parent().find('button[role="switch"]').click();
+
+            // Frequency should no longer be visible
+            cy.contains('Frequency').should('not.exist');
+        });
+    });
 });
