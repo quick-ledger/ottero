@@ -15,6 +15,9 @@ export const useInvoiceForm = (defaultValues?: Partial<InvoiceFormValues>) => {
             status: 'DRAFT',
             issueDate: new Date().toISOString().split('T')[0],
             dueDate: new Date(new Date().setDate(new Date().getDate() + 14)).toISOString().split('T')[0],
+            isRecurring: false,
+            recurringFrequency: 'MONTHLY',
+            recurringAutoSend: false,
             ...defaultValues
         },
         mode: 'onChange'

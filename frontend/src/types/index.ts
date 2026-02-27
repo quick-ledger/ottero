@@ -87,6 +87,8 @@ export interface Quote {
 
 export interface InvoiceItem extends QuoteItem { }
 
+export type RecurringFrequency = 'WEEKLY' | 'BIWEEKLY' | 'MONTHLY' | 'QUARTERLY' | 'ANNUALLY';
+
 export interface Invoice {
     id: string;
     invoiceNumber: string;
@@ -109,6 +111,14 @@ export interface Invoice {
     companyId: string;
     notes?: string;
     paymentLink?: string;
+
+    // Recurring invoice fields
+    isRecurring?: boolean;
+    recurringFrequency?: RecurringFrequency;
+    recurringEndDate?: string;
+    recurringAutoSend?: boolean;
+    nextRecurringDate?: string;
+    parentInvoiceId?: string;
 }
 
 // Helper types for API responses

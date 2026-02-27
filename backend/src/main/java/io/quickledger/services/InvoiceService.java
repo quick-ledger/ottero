@@ -139,6 +139,21 @@ public class InvoiceService {
 
         calculateInvoiceTotals(invoice);
 
+        // Calculate next recurring date if recurring is enabled
+        if (Boolean.TRUE.equals(invoice.getIsRecurring()) && invoice.getRecurringFrequency() != null) {
+            if (invoice.getNextRecurringDate() == null) {
+                invoice.setNextRecurringDate(
+                    RecurringInvoiceScheduler.calculateNextRecurringDate(
+                        invoice.getRecurringFrequency(),
+                        java.time.LocalDate.now()
+                    )
+                );
+            }
+        } else {
+            // Clear recurring fields if not recurring
+            invoice.setNextRecurringDate(null);
+        }
+
         invoice = invoiceRepository.save(invoice);
         InvoiceDto savedInvoiceDto = invoiceMapper.toDto(invoice, false);
         savedInvoiceDto.setPaymentLink(generatePaymentLink(invoice));

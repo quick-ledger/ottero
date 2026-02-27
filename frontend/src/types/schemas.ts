@@ -68,6 +68,14 @@ export const InvoiceSchema = z.object({
 
     invoiceItems: z.array(InvoiceItemSchema),
     companyId: z.string().optional(),
+
+    // Recurring invoice fields
+    isRecurring: z.boolean().optional(),
+    recurringFrequency: z.enum(['WEEKLY', 'BIWEEKLY', 'MONTHLY', 'QUARTERLY', 'ANNUALLY']).optional(),
+    recurringEndDate: z.string().optional(),
+    recurringAutoSend: z.boolean().optional(),
+    nextRecurringDate: z.string().optional(),
+    parentInvoiceId: z.string().optional(),
 });
 
 export type QuoteFormValues = z.infer<typeof QuoteSchema>;

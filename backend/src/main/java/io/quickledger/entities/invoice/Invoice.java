@@ -8,6 +8,7 @@ import io.quickledger.entities.quote.Quote;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 // make sure field names of quote and invoice match as much as possible.
@@ -78,6 +79,29 @@ public class Invoice extends BaseEntity {
     public enum DiscountType {
         PERCENT, DOLLAR;
     }
+
+    public enum RecurringFrequency {
+        WEEKLY, BIWEEKLY, MONTHLY, QUARTERLY, ANNUALLY
+    }
+
+    @Column(name = "is_recurring")
+    private Boolean isRecurring = false;
+
+    @Column(name = "recurring_frequency")
+    @Enumerated(EnumType.STRING)
+    private RecurringFrequency recurringFrequency;
+
+    @Column(name = "recurring_end_date")
+    private LocalDate recurringEndDate;
+
+    @Column(name = "recurring_auto_send")
+    private Boolean recurringAutoSend = false;
+
+    @Column(name = "next_recurring_date")
+    private LocalDate nextRecurringDate;
+
+    @Column(name = "parent_invoice_id")
+    private Long parentInvoiceId;
 
     // Getters and Setters
 
@@ -207,6 +231,54 @@ public class Invoice extends BaseEntity {
 
     public void setGst(BigDecimal gst) {
         this.gst = gst;
+    }
+
+    public Boolean getIsRecurring() {
+        return isRecurring;
+    }
+
+    public void setIsRecurring(Boolean isRecurring) {
+        this.isRecurring = isRecurring;
+    }
+
+    public RecurringFrequency getRecurringFrequency() {
+        return recurringFrequency;
+    }
+
+    public void setRecurringFrequency(RecurringFrequency recurringFrequency) {
+        this.recurringFrequency = recurringFrequency;
+    }
+
+    public LocalDate getRecurringEndDate() {
+        return recurringEndDate;
+    }
+
+    public void setRecurringEndDate(LocalDate recurringEndDate) {
+        this.recurringEndDate = recurringEndDate;
+    }
+
+    public Boolean getRecurringAutoSend() {
+        return recurringAutoSend;
+    }
+
+    public void setRecurringAutoSend(Boolean recurringAutoSend) {
+        this.recurringAutoSend = recurringAutoSend;
+    }
+
+    public LocalDate getNextRecurringDate() {
+        return nextRecurringDate;
+    }
+
+    public void setNextRecurringDate(LocalDate nextRecurringDate) {
+        this.nextRecurringDate = nextRecurringDate;
+    }
+
+    public Long getParentInvoiceId() {
+        return parentInvoiceId;
+    }
+
+    public void setParentInvoiceId(Long parentInvoiceId) {
+        this.parentInvoiceId = parentInvoiceId;
     }
 
     // toString method

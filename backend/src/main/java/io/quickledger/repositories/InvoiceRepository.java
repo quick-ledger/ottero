@@ -8,6 +8,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -58,4 +59,8 @@ public interface InvoiceRepository extends CrudRepository<Invoice, Long> {
         LIMIT :limit
         """, nativeQuery = true)
     List<Object[]> getTopCustomersByCompanyId(@Param("companyId") Long companyId, @Param("limit") int limit);
+
+    // Find recurring invoices due for generation
+    @Query("SELECT i FROM Invoice i WHERE i.isRecurring = true AND i.nextRecurringDate <= :today AND (i.recurringEndDate IS NULL OR i.recurringEndDate >= :today)")
+    List<Invoice> findRecurringInvoicesDueForGeneration(@Param("today") LocalDate today);
 }
