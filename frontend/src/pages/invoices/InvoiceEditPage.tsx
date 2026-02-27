@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Separator } from '@/components/ui/separator';
 import InvoiceLineItems from './InvoiceLineItems';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, ArrowLeft, Save, Trash, Download, Mail, Link } from 'lucide-react';
+import { Loader2, ArrowLeft, Save, Trash, Download, Mail, Link, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAppStore } from '@/store/useAppStore';
@@ -15,6 +15,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Switch } from '@/components/ui/switch';
 import {
     AlertDialog,
     AlertDialogAction,
@@ -58,6 +59,11 @@ export default function InvoiceEditPage() {
                 status: invoice.status,
                 issueDate: invoice.issueDate?.substring(0, 10),
                 dueDate: invoice.dueDate?.substring(0, 10),
+                isRecurring: invoice.isRecurring || false,
+                recurringFrequency: invoice.recurringFrequency || 'MONTHLY',
+                recurringEndDate: invoice.recurringEndDate?.substring(0, 10) || '',
+                recurringAutoSend: invoice.recurringAutoSend || false,
+                nextRecurringDate: invoice.nextRecurringDate?.substring(0, 10) || '',
             });
         }
     }, [invoice, form]);
@@ -357,6 +363,118 @@ export default function InvoiceEditPage() {
                             </CardContent>
                         </Card>
                     </div>
+
+                    {/* Recurring Settings Card */}
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                                <RefreshCw className="h-5 w-5" />
+                                Recurring Settings
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            <FormField
+                                control={form.control}
+                                name="isRecurring"
+                                render={({ field }) => (
+                                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                                        <div className="space-y-0.5">
+                                            <FormLabel className="text-base">Enable Recurring</FormLabel>
+                                            <p className="text-sm text-muted-foreground">
+                                                Automatically generate invoices on a schedule
+                                            </p>
+                                        </div>
+                                        <FormControl>
+                                            <Switch
+                                                checked={field.value || false}
+                                                onCheckedChange={field.onChange}
+                                                disabled={isReadOnly || status === 'PAID' || status === 'CANCELLED'}
+                                            />
+                                        </FormControl>
+                                    </FormItem>
+                                )}
+                            />
+
+                            {form.watch('isRecurring') && (
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 pt-4">
+                                    <FormField
+                                        control={form.control}
+                                        name="recurringFrequency"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Frequency</FormLabel>
+                                                <Select onValueChange={field.onChange} value={field.value || 'MONTHLY'} disabled={isReadOnly}>
+                                                    <FormControl>
+                                                        <SelectTrigger>
+                                                            <SelectValue placeholder="Select frequency" />
+                                                        </SelectTrigger>
+                                                    </FormControl>
+                                                    <SelectContent>
+                                                        <SelectItem value="WEEKLY">Weekly</SelectItem>
+                                                        <SelectItem value="BIWEEKLY">Bi-weekly</SelectItem>
+                                                        <SelectItem value="MONTHLY">Monthly</SelectItem>
+                                                        <SelectItem value="QUARTERLY">Quarterly</SelectItem>
+                                                        <SelectItem value="ANNUALLY">Annually</SelectItem>
+                                                    </SelectContent>
+                                                </Select>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+
+                                    <FormField
+                                        control={form.control}
+                                        name="recurringEndDate"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>End Date <span className="text-muted-foreground text-xs">(Optional)</span></FormLabel>
+                                                <FormControl>
+                                                    <Input type="date" {...field} value={field.value || ''} disabled={isReadOnly} />
+                                                </FormControl>
+                                                <p className="text-xs text-muted-foreground">Leave empty for indefinite</p>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+
+                                    <FormField
+                                        control={form.control}
+                                        name="recurringAutoSend"
+                                        render={({ field }) => (
+                                            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                                                <div className="space-y-0.5">
+                                                    <FormLabel>Auto-send</FormLabel>
+                                                    <p className="text-xs text-muted-foreground">
+                                                        Send to client automatically
+                                                    </p>
+                                                </div>
+                                                <FormControl>
+                                                    <Switch
+                                                        checked={field.value || false}
+                                                        onCheckedChange={field.onChange}
+                                                        disabled={isReadOnly}
+                                                    />
+                                                </FormControl>
+                                            </FormItem>
+                                        )}
+                                    />
+
+                                    {form.watch('nextRecurringDate') && (
+                                        <div className="flex flex-col justify-center rounded-lg border p-4 bg-muted/50">
+                                            <span className="text-sm font-medium">Next Invoice</span>
+                                            <span className="text-lg font-bold">
+                                                {new Date(form.watch('nextRecurringDate')!).toLocaleDateString('en-AU', {
+                                                    day: 'numeric',
+                                                    month: 'short',
+                                                    year: 'numeric'
+                                                })}
+                                            </span>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </CardContent>
+                    </Card>
 
                     <InvoiceLineItems form={form} disabled={isReadOnly} />
 

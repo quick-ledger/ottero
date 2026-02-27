@@ -30,6 +30,14 @@ public class InvoiceDto {
     private String quoteNumber;
     private String paymentLink;
 
+    // Recurring invoice fields
+    private Boolean isRecurring;
+    private Invoice.RecurringFrequency recurringFrequency;
+    private LocalDate recurringEndDate;
+    private Boolean recurringAutoSend;
+    private LocalDate nextRecurringDate;
+    private Long parentInvoiceId;
+
     public Long getId() {
         return id;
     }
@@ -204,5 +212,53 @@ public class InvoiceDto {
 
     public void setPaymentLink(String paymentLink) {
         this.paymentLink = paymentLink;
+    }
+
+    public Boolean getIsRecurring() {
+        return isRecurring;
+    }
+
+    public void setIsRecurring(Boolean isRecurring) {
+        this.isRecurring = isRecurring;
+    }
+
+    public Invoice.RecurringFrequency getRecurringFrequency() {
+        return recurringFrequency;
+    }
+
+    public void setRecurringFrequency(Invoice.RecurringFrequency recurringFrequency) {
+        this.recurringFrequency = recurringFrequency;
+    }
+
+    public LocalDate getRecurringEndDate() {
+        return recurringEndDate;
+    }
+
+    public void setRecurringEndDate(LocalDate recurringEndDate) {
+        this.recurringEndDate = recurringEndDate;
+    }
+
+    public Boolean getRecurringAutoSend() {
+        return recurringAutoSend;
+    }
+
+    public void setRecurringAutoSend(Boolean recurringAutoSend) {
+        this.recurringAutoSend = recurringAutoSend;
+    }
+
+    public LocalDate getNextRecurringDate() {
+        return nextRecurringDate;
+    }
+
+    public void setNextRecurringDate(LocalDate nextRecurringDate) {
+        this.nextRecurringDate = nextRecurringDate;
+    }
+
+    public Long getParentInvoiceId() {
+        return parentInvoiceId;
+    }
+
+    public void setParentInvoiceId(Long parentInvoiceId) {
+        this.parentInvoiceId = parentInvoiceId;
     }
 }

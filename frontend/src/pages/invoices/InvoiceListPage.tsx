@@ -14,7 +14,7 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import { Pagination } from '@/components/ui/pagination-controls';
-import { Plus, Search, FileText } from 'lucide-react';
+import { Plus, Search, FileText, RefreshCw } from 'lucide-react';
 import { useDebounce } from '@/hooks/useDebounce';
 
 import { getInvoiceStatusLabel, getInvoiceStatusColor } from '@/lib/invoice-status';
@@ -86,9 +86,12 @@ export default function InvoiceListPage() {
                             data?.content.map((invoice) => (
                                 <TableRow key={invoice.id}>
                                     <TableCell className="font-medium">
-                                        <Link to={`/invoices/${invoice.id}`} className="hover:underline flex items-center">
-                                            <FileText className="mr-2 h-4 w-4 text-muted-foreground" />
+                                        <Link to={`/invoices/${invoice.id}`} className="hover:underline flex items-center gap-2">
+                                            <FileText className="h-4 w-4 text-muted-foreground" />
                                             {invoice.invoiceNumber}
+                                            {invoice.isRecurring && (
+                                                <RefreshCw className="h-4 w-4 text-blue-500" title="Recurring invoice" />
+                                            )}
                                         </Link>
                                     </TableCell>
                                     <TableCell>

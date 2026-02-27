@@ -169,6 +169,18 @@
             <version>9.1.22</version>
         </dependency>
 
+        <!-- ShedLock for distributed scheduling -->
+        <dependency>
+            <groupId>net.javacrumbs.shedlock</groupId>
+            <artifactId>shedlock-spring</artifactId>
+            <version>5.10.2</version>
+        </dependency>
+        <dependency>
+            <groupId>net.javacrumbs.shedlock</groupId>
+            <artifactId>shedlock-provider-jdbc-template</artifactId>
+            <version>5.10.2</version>
+        </dependency>
+
         <!-- to sign the temp jwt token -->
         <!--<dependency>
             <groupId>io.jsonwebtoken</groupId>
