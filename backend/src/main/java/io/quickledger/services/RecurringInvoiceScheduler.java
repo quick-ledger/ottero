@@ -7,6 +7,7 @@ import io.quickledger.repositories.SequenceConfigRepository;
 import io.quickledger.entities.SequenceConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +35,7 @@ public class RecurringInvoiceScheduler {
     }
 
     @Scheduled(cron = "0 0 6 * * *") // Daily at 6 AM
+    @SchedulerLock(name = "generateRecurringInvoices", lockAtLeastFor = "PT5M", lockAtMostFor = "PT30M")
     @Transactional
     public void generateRecurringInvoices() {
         logger.info("Starting recurring invoice generation...");
