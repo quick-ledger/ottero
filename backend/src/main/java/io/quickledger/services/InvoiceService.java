@@ -142,10 +142,14 @@ public class InvoiceService {
         // Calculate next recurring date if recurring is enabled
         if (Boolean.TRUE.equals(invoice.getIsRecurring()) && invoice.getRecurringFrequency() != null) {
             if (invoice.getNextRecurringDate() == null) {
+                // Use issue date as the base for recurring calculations
+                java.time.LocalDate issueDate = invoice.getInvoiceDate() != null
+                    ? java.time.LocalDate.parse(invoice.getInvoiceDate())
+                    : java.time.LocalDate.now();
                 invoice.setNextRecurringDate(
                     RecurringInvoiceScheduler.calculateNextRecurringDate(
                         invoice.getRecurringFrequency(),
-                        java.time.LocalDate.now()
+                        issueDate
                     )
                 );
             }
