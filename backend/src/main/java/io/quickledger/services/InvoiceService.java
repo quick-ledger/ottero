@@ -56,6 +56,7 @@ public class InvoiceService {
     private final EmailService emailService;
     private final StripeService stripeService;
     private final TempTokenService tempTokenService;
+    private final PlanService planService;
 
     @org.springframework.beans.factory.annotation.Value("${application.frontend.url}")
     private String applicationFrontendUrl;
@@ -66,7 +67,7 @@ public class InvoiceService {
             InvoiceMapper invoiceMapper, ClientMapper clientMapper, InvoiceItemMapper invoiceItemMapper,
             QuoteRepository quoteRepository, SequenceConfigRepository sequenceConfigRepository,
             PdfService pdfService, ObjectMapper objectMapper, EmailService emailService, StripeService stripeService,
-            TempTokenService tempTokenService) {
+            TempTokenService tempTokenService, PlanService planService) {
         this.invoiceRepository = invoiceRepository;
         this.clientService = clientService;
         this.clientRepository = clientRepository;
@@ -81,6 +82,7 @@ public class InvoiceService {
         this.emailService = emailService;
         this.stripeService = stripeService;
         this.tempTokenService = tempTokenService;
+        this.planService = planService;
     }
 
     public InvoiceDto createUpdate(Long companyId, InvoiceDto invoiceDto, final User user) {
@@ -102,14 +104,10 @@ public class InvoiceService {
         // this is a new invoice
         if (invoice.getId() == null && StringUtils.isBlank(invoice.getInvoiceNumber())) {
 
-            // Enforce Plan Limits (Free & Basic = 5 invoices/month)
-            String plan = user.getSubscriptionPlan();
-            if (plan == null || "Free".equalsIgnoreCase(plan) || "Basic".equalsIgnoreCase(plan)) {
-                long count = invoiceRepository.countMonthlyInvoicesByCompanyId(companyId);
-                if (count >= 5) {
-                    throw new IllegalStateException("You have reached the limit of 5 invoices per month on the "
-                            + (plan == null ? "Free" : plan) + " plan.");
-                }
+            // Enforce Plan Limits (Free = 5 invoices/month, Basic+ = unlimited)
+            long count = invoiceRepository.countMonthlyInvoicesByCompanyId(companyId);
+            if (!planService.canCreateMoreDocuments(user, count)) {
+                throw new IllegalStateException("You have reached the limit of 5 invoices per month on the Free plan. Upgrade to Basic for unlimited invoices.");
             }
 
             invoice.setInvoiceNumber(generateInvoiceSequence(invoiceDto.getCompanyId()));
@@ -141,6 +139,8 @@ public class InvoiceService {
 
         // Calculate next recurring date if recurring is enabled
         if (Boolean.TRUE.equals(invoice.getIsRecurring()) && invoice.getRecurringFrequency() != null) {
+            // Recurring invoices require Advanced plan
+            planService.requireFeature(user, PlanService.Feature.RECURRING_INVOICES);
             if (invoice.getNextRecurringDate() == null) {
                 // Use issue date as the base for recurring calculations
                 java.time.LocalDate issueDate = invoice.getInvoiceDate() != null
@@ -182,14 +182,10 @@ public class InvoiceService {
         invoice.setQuote(quote);
         invoice.setUser(user);
 
-        // Enforce Plan Limits (Free & Basic = 5 invoices/month)
-        String plan = user.getSubscriptionPlan();
-        if (plan == null || "Free".equalsIgnoreCase(plan) || "Basic".equalsIgnoreCase(plan)) {
-            long count = invoiceRepository.countMonthlyInvoicesByCompanyId(companyId);
-            if (count >= 5) {
-                throw new IllegalStateException("You have reached the limit of 5 invoices per month on the "
-                        + (plan == null ? "Free" : plan) + " plan.");
-            }
+        // Enforce Plan Limits (Free = 5 invoices/month, Basic+ = unlimited)
+        long count = invoiceRepository.countMonthlyInvoicesByCompanyId(companyId);
+        if (!planService.canCreateMoreDocuments(user, count)) {
+            throw new IllegalStateException("You have reached the limit of 5 invoices per month on the Free plan. Upgrade to Basic for unlimited invoices.");
         }
 
         invoice.setInvoiceNumber(generateInvoiceSequence(companyId));

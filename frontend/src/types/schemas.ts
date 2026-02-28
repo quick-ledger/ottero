@@ -152,4 +152,30 @@ export const EmployeeSchema = z.object({
 
 export type EmployeeFormValues = z.infer<typeof EmployeeSchema>;
 
+export const ExpenseSchema = z.object({
+    id: z.string().optional(),
+    expenseDate: z.string().min(1, "Date is required"),
+    amount: z.coerce.number().positive("Amount must be positive"),
+    gstAmount: z.coerce.number().min(0).optional(),
+    category: z.enum([
+        'ADVERTISING', 'BANK_FEES', 'CAR_EXPENSES', 'COMMUNICATION',
+        'DEPRECIATION', 'ELECTRICITY', 'ENTERTAINMENT', 'FREIGHT',
+        'INSURANCE', 'INTEREST', 'LEGAL_FEES', 'MEALS_TRAVEL',
+        'OFFICE_SUPPLIES', 'PROFESSIONAL_DEVELOPMENT', 'RENT',
+        'REPAIRS_MAINTENANCE', 'SOFTWARE_SUBSCRIPTIONS', 'SUBCONTRACTORS',
+        'SUPER_CONTRIBUTIONS', 'TRAVEL', 'WAGES', 'OTHER'
+    ]),
+    vendor: z.string().min(1, "Vendor is required"),
+    expenseDescription: z.string().optional(),
+    status: z.enum(['PENDING', 'APPROVED', 'REJECTED', 'ARCHIVED']).default('PENDING'),
+    taxDeductible: z.boolean().default(true),
+    gstClaimable: z.boolean().default(true),
+    referenceNumber: z.string().optional(),
+    paymentMethod: z.string().optional(),
+    notes: z.string().optional(),
+    companyId: z.string().optional(),
+});
+
+export type ExpenseFormValues = z.infer<typeof ExpenseSchema>;
+
 

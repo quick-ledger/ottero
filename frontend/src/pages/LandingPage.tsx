@@ -114,7 +114,7 @@ const LandingPage = () => {
                             name="Free"
                             price="$0"
                             description="Perfect for getting started"
-                            features={['Up to 5 Quotes/Invoices per month', 'Email Support', 'Custom Templates', 'Customer & Employee CRM']}
+                            features={['Up to 5 Quotes and Invoices/month', 'Email Support', 'Custom Templates', 'Customer & Employee CRM']}
                             buttonText="Get Started for Free"
                             variant="outline"
                             onSubscribe={handleLogin}
@@ -135,13 +135,13 @@ const LandingPage = () => {
                         {/* Advanced Plan */}
                         <PricingCard
                             name="Advanced"
-                            price="Coming Soon"
+                            price="$15/mo"
                             description="For established or larger businesses"
-                            features={['Everything in Basic', 'Job Management', 'Asset Management', 'Advanced Analytics', 'Premium Support']}
-                            buttonText="Coming Soon"
+                            features={['Everything in Basic', 'Recurring Invoices', 'Expense Management', 'Job Management (Coming Soon)', 'Asset Management (Coming Soon)', 'Advanced Analytics (Coming Soon)']}
+                            buttonText="Get Started"
                             variant="secondary"
-                            onSubscribe={() => { }}
-                            disabled={true}
+                            onSubscribe={handleLogin}
+                            disabled={false}
                         />
                     </div>
                 </div>

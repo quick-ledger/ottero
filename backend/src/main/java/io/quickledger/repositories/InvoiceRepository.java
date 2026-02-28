@@ -65,13 +65,13 @@ public interface InvoiceRepository extends CrudRepository<Invoice, Long> {
     List<Invoice> findRecurringInvoicesDueForGeneration(@Param("today") LocalDate today);
 
     // Find SENT invoices with valid client emails for payment reminders
-    @Query("""
-        SELECT i FROM Invoice i
-        JOIN FETCH i.client c
-        JOIN FETCH i.company
-        WHERE i.status = io.quickledger.entities.invoice.Invoice.InvoiceStatus.SENT
+    @Query(value = """
+        SELECT i.* FROM invoices i
+        JOIN clients c ON i.client_id = c.id
+        JOIN companies comp ON i.company_id = comp.id
+        WHERE i.status = 'SENT'
         AND c.email IS NOT NULL
         AND c.email <> ''
-        """)
+        """, nativeQuery = true)
     List<Invoice> findInvoicesForReminders();
 }
