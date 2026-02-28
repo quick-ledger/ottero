@@ -17,12 +17,12 @@ const PLANS = [
         name: 'Free',
         price: '$0',
         description: 'Perfect for getting started',
-        features: ['Up to 5 Quotes/month', 'Basic Invoicing', 'Email Support', 'Custom Templates', 'Customer & Employee CRM'],
+        features: ['Up to 5 Quotes and Invoices/month', 'Email Support', 'Custom Templates', 'Customer & Employee CRM'],
         variant: 'outline',
         disabled: false
     },
     {
-        id: getEnv('STRIPE_PRICE_BASIC') || 'price_1SuAACBJq5sUDyRbBbGFcqYn', // Fallback for safety
+        id: getEnv('STRIPE_PRICE_BASIC') || 'price_1SwXG9BN4BBTzyIzU1G5sPnW', // Basic plan $5/mo
         name: 'Basic',
         price: '$5/mo',
         description: 'For growing small businesses',
@@ -32,13 +32,13 @@ const PLANS = [
         disabled: false
     },
     {
-        id: 'price_advanced_monthly',
+        id: getEnv('STRIPE_PRICE_ADVANCED') || 'price_1T5cMbBN4BBTzyIzA7uPHGLc', // Advanced plan $15/mo
         name: 'Advanced',
-        price: 'Coming Soon',
+        price: '$15/mo',
         description: 'For established enterprises',
-        features: ['Everything in Basic', 'Job Management', 'Asset Management', 'Advanced Analytics', 'Dedicated Manager'],
+        features: ['Everything in Basic', 'Recurring Invoices', 'Expense Management', 'Job Management (Coming Soon)', 'Asset Management (Coming Soon)', 'Advanced Analytics (Coming Soon)'],
         variant: 'secondary',
-        disabled: true
+        disabled: false
     }
 ];
 

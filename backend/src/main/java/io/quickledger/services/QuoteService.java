@@ -54,6 +54,7 @@ public class QuoteService {
     private final QuoteAttachmentRepository quoteAttachmentRepository;
     private final io.quickledger.mappers.quote.QuoteAttachmentMapper quoteAttachmentMapper;
     private final UserCompanyService userCompanyService;
+    private final PlanService planService;
     private final String appBaseUrl;
 
     public QuoteService(QuoteRepository quoteRepository, QuoteItemRepository quoteItemRepository,
@@ -64,7 +65,7 @@ public class QuoteService {
             QuoteAttachmentRepository quoteAttachmentRepository,
             io.quickledger.mappers.quote.QuoteAttachmentMapper quoteAttachmentMapper,
             ObjectMapper objectMapper, EmailService emailService,
-            UserCompanyService userCompanyService,
+            UserCompanyService userCompanyService, PlanService planService,
             @Value("${application.frontend.url}") String appBaseUrl) {
         this.quoteRepository = quoteRepository;
         this.quoteItemRepository = quoteItemRepository;
@@ -82,6 +83,7 @@ public class QuoteService {
         this.objectMapper = objectMapper;
         this.emailService = emailService;
         this.userCompanyService = userCompanyService;
+        this.planService = planService;
         this.appBaseUrl = appBaseUrl;
     }
 
@@ -282,18 +284,14 @@ public class QuoteService {
             } else if (StringUtils.isBlank(quote.getQuoteNumber())) {
                 // Completely new quote
 
-                // Enforce Plan Limits (Free & Basic = 5 quotes/month)
+                // Enforce Plan Limits (Free = 5 quotes/month, Basic+ = unlimited)
                 if (userid != null) {
                     User user = userRepository.findById(userid).orElse(null);
                     if (user != null) {
-                        String plan = user.getSubscriptionPlan();
-                        if (plan == null || "Free".equalsIgnoreCase(plan) || "Basic".equalsIgnoreCase(plan)) {
-                            long count = quoteRepository.countMonthlyQuotesByCompanyId(companyId);
-                            if (count >= 5) {
-                                throw new IllegalStateException(
-                                        "You have reached the limit of 5 quotes per month on the "
-                                                + (plan == null ? "Free" : plan) + " plan.");
-                            }
+                        long count = quoteRepository.countMonthlyQuotesByCompanyId(companyId);
+                        if (!planService.canCreateMoreDocuments(user, count)) {
+                            throw new IllegalStateException(
+                                    "You have reached the limit of 5 quotes per month on the Free plan. Upgrade to Basic for unlimited quotes.");
                         }
                     }
                 }

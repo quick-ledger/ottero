@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { Separator } from '@/components/ui/separator';
 import InvoiceLineItems from './InvoiceLineItems';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, ArrowLeft, Save, Trash, Download, Mail, Link, RefreshCw } from 'lucide-react';
+import { Loader2, ArrowLeft, Save, Trash, Download, Mail, Link, RefreshCw, Sparkles } from 'lucide-react';
+import { useAuth0 } from '@auth0/auth0-react';
 import { toast } from 'sonner';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAppStore } from '@/store/useAppStore';
@@ -28,10 +29,14 @@ import {
 } from "@/components/ui/alert-dialog";
 import { CustomerSearch } from '@/components/quote/CustomerSearch';
 import { INVOICE_STATUS_LABELS } from '@/lib/invoice-status';
-// ... imports
+interface UserProfile {
+    subscriptionPlan: string;
+}
+
 export default function InvoiceEditPage() {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
+    const { user } = useAuth0();
     const { selectedCompanyId } = useAppStore();
     const api = useApi();
     const isNew = id === 'new' || !id;
@@ -39,6 +44,9 @@ export default function InvoiceEditPage() {
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     const [isSendDialogOpen, setIsSendDialogOpen] = useState(false);
     const [isLinkConfirmOpen, setIsLinkConfirmOpen] = useState(false);
+    const [profile, setProfile] = useState<UserProfile | null>(null);
+
+    const isAdvancedPlan = profile?.subscriptionPlan?.toLowerCase() === 'advanced';
 
     const { data: invoice, isLoading: isInvoiceLoading } = useInvoice(id || '', selectedCompanyId);
     const { form } = useInvoiceForm();
@@ -47,6 +55,21 @@ export default function InvoiceEditPage() {
 
     const status = form.watch("status");
     const isReadOnly = status === 'PAID' || status === 'CANCELLED' || status === 'SENT';
+
+    // Fetch user profile for plan checking
+    useEffect(() => {
+        const fetchProfile = async () => {
+            try {
+                const response = await api.get('/api/users/profile', {
+                    headers: { 'X-User-Id': user?.sub }
+                });
+                setProfile(response.data);
+            } catch (error) {
+                console.error('Failed to fetch profile', error);
+            }
+        };
+        if (user?.sub) fetchProfile();
+    }, [user?.sub]);
 
     useEffect(() => {
         if (invoice) {
@@ -370,9 +393,26 @@ export default function InvoiceEditPage() {
                             <CardTitle className="flex items-center gap-2">
                                 <RefreshCw className="h-5 w-5" />
                                 Recurring Settings
+                                {!isAdvancedPlan && profile && (
+                                    <Badge variant="secondary" className="ml-2 text-xs">Advanced Plan</Badge>
+                                )}
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
+                            {!isAdvancedPlan && profile && (
+                                <div className="flex items-center justify-between rounded-lg border border-amber-200 bg-amber-50 dark:bg-amber-950/20 dark:border-amber-800 p-4">
+                                    <div className="flex items-center gap-3">
+                                        <Sparkles className="h-5 w-5 text-amber-600" />
+                                        <div>
+                                            <p className="font-medium text-amber-800 dark:text-amber-200">Upgrade to Advanced</p>
+                                            <p className="text-sm text-amber-700 dark:text-amber-300">Recurring invoices require the Advanced plan.</p>
+                                        </div>
+                                    </div>
+                                    <Button size="sm" onClick={() => navigate('/settings/pricing')}>
+                                        Upgrade
+                                    </Button>
+                                </div>
+                            )}
                             <FormField
                                 control={form.control}
                                 name="isRecurring"
@@ -388,7 +428,7 @@ export default function InvoiceEditPage() {
                                             <Switch
                                                 checked={field.value || false}
                                                 onCheckedChange={field.onChange}
-                                                disabled={isReadOnly || status === 'PAID' || status === 'CANCELLED'}
+                                                disabled={isReadOnly || status === 'PAID' || status === 'CANCELLED' || !isAdvancedPlan}
                                             />
                                         </FormControl>
                                     </FormItem>
