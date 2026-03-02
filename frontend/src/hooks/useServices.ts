@@ -17,7 +17,7 @@ export const useServices = ({ page, size, searchTerm, companyId }: ServiceSearch
         queryFn: async () => {
             if (!companyId) return null;
 
-            let url = `/api/companies/${companyId}/services`;
+            let url = `/api/companies/${companyId}/service_items`;
             const params: any = { page, size };
 
             if (searchTerm) {
@@ -39,7 +39,7 @@ export const useService = (id: string | undefined) => {
         queryKey: ['service', id],
         queryFn: async () => {
             if (!id || id === 'new') return null;
-            const { data } = await api.get<Service>(`/api/services/${id}`);
+            const { data } = await api.get<Service>(`/api/service_items/${id}`);
             return data;
         },
         enabled: !!id && id !== 'new',
@@ -52,7 +52,7 @@ export const useCreateService = () => {
 
     return useMutation({
         mutationFn: async ({ companyId, ...service }: Partial<Service> & { companyId: string }) => {
-            const { data } = await api.post<Service>(`/api/companies/${companyId}/services`, service);
+            const { data } = await api.post<Service>(`/api/companies/${companyId}/service_items`, service);
             return data;
         },
         onSuccess: (_, variables) => {
@@ -67,7 +67,7 @@ export const useUpdateService = () => {
 
     return useMutation({
         mutationFn: async ({ id, companyId, ...service }: Partial<Service> & { id: string, companyId: string }) => {
-            const { data } = await api.put<Service>(`/api/services/${id}`, service);
+            const { data } = await api.put<Service>(`/api/companies/${companyId}/service_items/${id}`, service);
             return data;
         },
         onSuccess: (_, variables) => {
