@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface QuoteRepository extends JpaRepository<Quote, Long> {
+        Optional<Quote> findByIdAndCompanyId(Long id, Long companyId);
+
         List<Quote> findByCompanyId(Long companyId);
 
         Page<Quote> findByCompanyId(Long companyId, Pageable pageable);

@@ -34,6 +34,7 @@ interface PlanAccessResult {
     // Convenience checks for common features
     canUseRecurringInvoices: boolean;
     canUseExpenses: boolean;
+    canUseJobs: boolean;
     hasUnlimitedDocuments: boolean;
 
     // Plan tier checks
@@ -95,6 +96,7 @@ export function usePlanAccess(): PlanAccessResult {
         // Convenience checks for common features
         canUseRecurringInvoices: hasFeature(plan, 'RECURRING_INVOICES'),
         canUseExpenses: hasFeature(plan, 'EXPENSE_MANAGEMENT'),
+        canUseJobs: hasFeature(plan, 'JOB_MANAGEMENT'),
         hasUnlimitedDocuments: hasFeature(plan, 'QUOTES_UNLIMITED'),
 
         // Plan tier checks

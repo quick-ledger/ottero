@@ -58,6 +58,14 @@ public class InvoiceController {
         return ResponseEntity.ok(invoiceService.getInvoiceById(companyId, id));
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<java.util.List<InvoiceDto>> searchInvoice(@PathVariable Long companyId,
+            @org.springframework.web.bind.annotation.RequestParam(required = true) String searchTerm,
+            @QueryParam("lazy") boolean lazy) {
+        java.util.List<InvoiceDto> invoices = invoiceService.searchInvoice(companyId, searchTerm, lazy);
+        return ResponseEntity.ok(invoices);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteInvoice(@PathVariable Long companyId, @PathVariable Long id) {
         invoiceService.deleteInvoice(companyId, id);

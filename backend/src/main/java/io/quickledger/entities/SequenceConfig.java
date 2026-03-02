@@ -10,7 +10,8 @@ import jakarta.persistence.*;
 public class SequenceConfig {
     public enum EntityType {
         INVOICE,
-        QUOTE
+        QUOTE,
+        JOB
     }
 
     @Id

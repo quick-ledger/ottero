@@ -18,7 +18,6 @@ public class ExpenseDto {
     private BigDecimal netAmount;
     private ExpenseCategory category;
     private String vendor;
-    private String expenseDescription;
     private ExpenseStatus status;
     private Boolean taxDeductible;
     private Boolean gstClaimable;
@@ -92,14 +91,6 @@ public class ExpenseDto {
 
     public void setVendor(String vendor) {
         this.vendor = vendor;
-    }
-
-    public String getExpenseDescription() {
-        return expenseDescription;
-    }
-
-    public void setExpenseDescription(String expenseDescription) {
-        this.expenseDescription = expenseDescription;
     }
 
     public ExpenseStatus getStatus() {

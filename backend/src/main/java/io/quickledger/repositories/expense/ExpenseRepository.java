@@ -28,7 +28,7 @@ public interface ExpenseRepository extends JpaRepository<Expense, Long> {
 
     @Query("SELECT e FROM Expense e WHERE e.company.id = :companyId AND " +
            "(LOWER(e.vendor) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
-           "LOWER(e.expenseDescription) LIKE LOWER(CONCAT('%', :searchTerm, '%')))")
+           "LOWER(e.notes) LIKE LOWER(CONCAT('%', :searchTerm, '%')))")
     Page<Expense> searchExpenses(
             @Param("companyId") Long companyId,
             @Param("searchTerm") String searchTerm,

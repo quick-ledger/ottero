@@ -306,6 +306,11 @@ public class InvoiceService {
         return invoices.map(invoice -> invoiceMapper.toDto(invoice, lazy));
     }
 
+    public List<InvoiceDto> searchInvoice(Long companyId, String searchTerm, boolean lazy) {
+        List<Invoice> invoices = invoiceRepository.searchInvoice(companyId, searchTerm);
+        return invoices.stream().map(i -> invoiceMapper.toDto(i, lazy)).collect(java.util.stream.Collectors.toList());
+    }
+
     public InvoiceDto getInvoiceById(Long companyId, Long invoiceId) {
         Invoice invoice = invoiceRepository.findById(invoiceId)
                 .orElseThrow(() -> new EntityNotFoundException("Invoice not found with id: " + invoiceId));

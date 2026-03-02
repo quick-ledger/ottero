@@ -10,7 +10,6 @@ export const useExpenseForm = () => {
             amount: 0,
             category: 'OTHER',
             vendor: '',
-            expenseDescription: '',
             status: 'PENDING',
             taxDeductible: true,
             gstClaimable: true,

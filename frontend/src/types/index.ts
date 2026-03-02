@@ -209,7 +209,6 @@ export interface Expense {
     netAmount: number;
     category: ExpenseCategory;
     vendor: string;
-    expenseDescription: string;
     status: ExpenseStatus;
     taxDeductible: boolean;
     gstClaimable: boolean;
@@ -240,4 +239,65 @@ export interface ExpenseSummary {
         gstAmount: number;
         count: number;
     }[];
+}
+
+// Job types
+export type JobStatus = 'SCHEDULED' | 'IN_PROGRESS' | 'ON_HOLD' | 'COMPLETED' | 'CANCELLED';
+
+export const JOB_STATUS_LABELS: Record<JobStatus, string> = {
+    SCHEDULED: 'Scheduled',
+    IN_PROGRESS: 'In Progress',
+    ON_HOLD: 'On Hold',
+    COMPLETED: 'Completed',
+    CANCELLED: 'Cancelled',
+};
+
+export interface JobNote {
+    id: string;
+    noteText: string;
+    noteDate: string;
+    createdDate: string;
+}
+
+export interface JobAttachment {
+    id: string;
+    fileName: string;
+    contentType: string;
+    size: number;
+}
+
+export interface LinkedQuote {
+    id: string;
+    quoteNumber: string;
+    status: string;
+    totalPrice: number;
+}
+
+export interface LinkedInvoice {
+    id: string;
+    invoiceNumber: string;
+    status: string;
+    totalPrice: number;
+}
+
+export interface Job {
+    id: string;
+    companyId: string;
+    clientId?: string;
+    clientName?: string;
+    clientEmail?: string;
+    clientPhone?: string;
+    jobNumber: string;
+    title: string;
+    jobDescription?: string;
+    location?: string;
+    status: JobStatus;
+    scheduledDate?: string;
+    completionDate?: string;
+    createdDate?: string;
+    modifiedDate?: string;
+    notes?: JobNote[];
+    attachments?: JobAttachment[];
+    linkedQuotes?: LinkedQuote[];
+    linkedInvoices?: LinkedInvoice[];
 }

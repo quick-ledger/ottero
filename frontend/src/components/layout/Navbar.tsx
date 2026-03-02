@@ -43,6 +43,7 @@ const Navbar = () => {
                     <Link to="/quotes" className="transition-colors hover:text-foreground/80 text-foreground/60 w-full md:w-auto">Quotes</Link>
                     <Link to="/invoices" className="transition-colors hover:text-foreground/80 text-foreground/60 w-full md:w-auto">Invoices</Link>
                     <Link to="/expenses" className="transition-colors hover:text-foreground/80 text-foreground/60 w-full md:w-auto">Expenses</Link>
+                    <Link to="/jobs" className="transition-colors hover:text-foreground/80 text-foreground/60 w-full md:w-auto">Jobs</Link>
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button variant="ghost" className="text-foreground/60 hover:text-foreground/80 px-2 justify-start md:justify-center w-full md:w-auto">
