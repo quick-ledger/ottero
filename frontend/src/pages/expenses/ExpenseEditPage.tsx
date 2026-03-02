@@ -374,33 +374,20 @@ export default function ExpenseEditPage() {
                         </Card>
                     </div>
 
-                    {/* Description & Notes */}
+                    {/* Notes */}
                     <Card>
                         <CardHeader>
-                            <CardTitle>Description & Notes</CardTitle>
+                            <CardTitle>Notes</CardTitle>
                         </CardHeader>
-                        <CardContent className="space-y-4">
-                            <FormField
-                                control={form.control}
-                                name="expenseDescription"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Description</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="Brief description of the expense" {...field} />
-                                        </FormControl>
-                                    </FormItem>
-                                )}
-                            />
+                        <CardContent>
                             <FormField
                                 control={form.control}
                                 name="notes"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Notes</FormLabel>
                                         <FormControl>
                                             <Textarea
-                                                placeholder="Additional notes for tax purposes..."
+                                                placeholder="Description or notes about this expense..."
                                                 {...field}
                                             />
                                         </FormControl>

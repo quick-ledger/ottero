@@ -97,8 +97,9 @@ public class PlanService {
             Feature.CUSTOMER_CRM,
             Feature.EMPLOYEE_CRM,
             Feature.RECURRING_INVOICES,
-            Feature.EXPENSE_MANAGEMENT
-            // JOB_MANAGEMENT, ASSET_MANAGEMENT, ADVANCED_ANALYTICS - Coming Soon
+            Feature.EXPENSE_MANAGEMENT,
+            Feature.JOB_MANAGEMENT
+            // ASSET_MANAGEMENT, ADVANCED_ANALYTICS - Coming Soon
     );
 
     /**

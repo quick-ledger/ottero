@@ -21,6 +21,8 @@ const CustomerListPage = lazy(() => import('@/pages/customers/CustomerListPage')
 const CustomerEditPage = lazy(() => import('@/pages/customers/CustomerEditPage'));
 const ExpenseListPage = lazy(() => import('@/pages/expenses/ExpenseListPage'));
 const ExpenseEditPage = lazy(() => import('@/pages/expenses/ExpenseEditPage'));
+const JobListPage = lazy(() => import('@/pages/jobs/JobListPage'));
+const JobEditPage = lazy(() => import('@/pages/jobs/JobEditPage'));
 
 const SequenceConfigPage = lazy(() => import('@/pages/settings/SequenceConfigPage'));
 const TemplateConfigPage = lazy(() => import('@/pages/settings/TemplateConfigPage'));
@@ -105,8 +107,8 @@ function App() {
                 <Route path="customers/:id" element={<CustomerEditPage />} />
                 <Route path="expenses" element={<ExpenseListPage />} />
                 <Route path="expenses/:id" element={<ExpenseEditPage />} />
-
-
+                <Route path="jobs" element={<JobListPage />} />
+                <Route path="jobs/:id" element={<JobEditPage />} />
 
               </Route>
             </Route>

@@ -40,9 +40,6 @@ public class Expense extends BaseEntity {
     @Column(name = "vendor", length = 500)
     private String vendor;
 
-    @Column(name = "expense_description", length = 2000)
-    private String expenseDescription;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 20)
     private ExpenseStatus status = ExpenseStatus.PENDING;
@@ -130,14 +127,6 @@ public class Expense extends BaseEntity {
 
     public void setVendor(String vendor) {
         this.vendor = vendor;
-    }
-
-    public String getExpenseDescription() {
-        return expenseDescription;
-    }
-
-    public void setExpenseDescription(String expenseDescription) {
-        this.expenseDescription = expenseDescription;
     }
 
     public ExpenseStatus getStatus() {

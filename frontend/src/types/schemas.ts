@@ -166,7 +166,6 @@ export const ExpenseSchema = z.object({
         'SUPER_CONTRIBUTIONS', 'TRAVEL', 'WAGES', 'OTHER'
     ]),
     vendor: z.string().min(1, "Vendor is required"),
-    expenseDescription: z.string().optional(),
     status: z.enum(['PENDING', 'APPROVED', 'REJECTED', 'ARCHIVED']).default('PENDING'),
     taxDeductible: z.boolean().default(true),
     gstClaimable: z.boolean().default(true),
@@ -178,4 +177,24 @@ export const ExpenseSchema = z.object({
 
 export type ExpenseFormValues = z.infer<typeof ExpenseSchema>;
 
+export const JobSchema = z.object({
+    id: z.string().optional(),
+    jobNumber: z.string().optional(),
+    title: z.string().min(1, "Title is required"),
+    jobDescription: z.string().optional(),
+    location: z.string().optional(),
+    clientId: z.string().optional(),
+    status: z.enum(['SCHEDULED', 'IN_PROGRESS', 'ON_HOLD', 'COMPLETED', 'CANCELLED']).default('SCHEDULED'),
+    scheduledDate: z.string().optional(),
+    completionDate: z.string().optional(),
+    companyId: z.string().optional(),
+});
 
+export type JobFormValues = z.infer<typeof JobSchema>;
+
+export const JobNoteSchema = z.object({
+    noteText: z.string().min(1, "Note text is required"),
+    noteDate: z.string().optional(),
+});
+
+export type JobNoteFormValues = z.infer<typeof JobNoteSchema>;

@@ -13,6 +13,7 @@ import io.quickledger.mappers.expense.ExpenseAttachmentMapper;
 import io.quickledger.mappers.expense.ExpenseMapper;
 import io.quickledger.repositories.expense.ExpenseAttachmentRepository;
 import io.quickledger.repositories.expense.ExpenseRepository;
+import io.quickledger.services.PlanService;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -51,6 +52,9 @@ class ExpenseServiceTest {
     @Mock
     private ExpenseAttachmentMapper attachmentMapper;
 
+    @Mock
+    private PlanService planService;
+
     private ExpenseService expenseService;
 
     private User advancedUser;
@@ -66,7 +70,8 @@ class ExpenseServiceTest {
                 expenseRepository,
                 attachmentRepository,
                 expenseMapper,
-                attachmentMapper
+                attachmentMapper,
+                planService
         );
 
         // Setup users with different plans
@@ -128,6 +133,9 @@ class ExpenseServiceTest {
 
     @Test
     void createExpense_withFreePlan_throwsException() {
+        doThrow(new IllegalStateException("Expense Management requires an Advanced plan"))
+                .when(planService).requireFeature(eq(freeUser), eq(PlanService.Feature.EXPENSE_MANAGEMENT));
+
         IllegalStateException exception = assertThrows(
                 IllegalStateException.class,
                 () -> expenseService.createOrUpdateExpense(testExpenseDto, 1L, freeUser)
@@ -139,6 +147,9 @@ class ExpenseServiceTest {
 
     @Test
     void createExpense_withBasicPlan_throwsException() {
+        doThrow(new IllegalStateException("Expense Management requires an Advanced plan"))
+                .when(planService).requireFeature(eq(basicUser), eq(PlanService.Feature.EXPENSE_MANAGEMENT));
+
         IllegalStateException exception = assertThrows(
                 IllegalStateException.class,
                 () -> expenseService.createOrUpdateExpense(testExpenseDto, 1L, basicUser)
@@ -153,6 +164,9 @@ class ExpenseServiceTest {
         User nullPlanUser = new User();
         nullPlanUser.setId(4L);
         nullPlanUser.setSubscriptionPlan(null);
+
+        doThrow(new IllegalStateException("Expense Management requires an Advanced plan"))
+                .when(planService).requireFeature(eq(nullPlanUser), eq(PlanService.Feature.EXPENSE_MANAGEMENT));
 
         IllegalStateException exception = assertThrows(
                 IllegalStateException.class,
@@ -247,6 +261,9 @@ class ExpenseServiceTest {
 
     @Test
     void deleteExpense_withFreePlan_throwsException() {
+        doThrow(new IllegalStateException("Expense Management requires an Advanced plan"))
+                .when(planService).requireFeature(eq(freeUser), eq(PlanService.Feature.EXPENSE_MANAGEMENT));
+
         IllegalStateException exception = assertThrows(
                 IllegalStateException.class,
                 () -> expenseService.deleteExpense(1L, 1L, freeUser)
@@ -295,6 +312,9 @@ class ExpenseServiceTest {
 
     @Test
     void uploadAttachment_withFreePlan_throwsException() {
+        doThrow(new IllegalStateException("Expense Management requires an Advanced plan"))
+                .when(planService).requireFeature(eq(freeUser), eq(PlanService.Feature.EXPENSE_MANAGEMENT));
+
         IllegalStateException exception = assertThrows(
                 IllegalStateException.class,
                 () -> expenseService.uploadAttachment(
@@ -356,6 +376,9 @@ class ExpenseServiceTest {
 
     @Test
     void deleteAttachment_withBasicPlan_throwsException() {
+        doThrow(new IllegalStateException("Expense Management requires an Advanced plan"))
+                .when(planService).requireFeature(eq(basicUser), eq(PlanService.Feature.EXPENSE_MANAGEMENT));
+
         IllegalStateException exception = assertThrows(
                 IllegalStateException.class,
                 () -> expenseService.deleteAttachment(1L, 1L, basicUser)

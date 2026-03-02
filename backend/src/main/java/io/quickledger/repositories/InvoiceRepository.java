@@ -15,6 +15,8 @@ import java.util.Optional;
 public interface InvoiceRepository extends CrudRepository<Invoice, Long> {
     Optional<Invoice> findById(Long id);
 
+    Optional<Invoice> findByIdAndCompanyId(Long id, Long companyId);
+
     Page<Invoice> findAllByCompanyIdOrderByCreatedDateDesc(Long companyId, Pageable pageable);
 
     @Query(value = "SELECT COUNT(id) FROM invoices WHERE company_id = :companyId AND YEAR(created_date) = YEAR(CURRENT_DATE) AND MONTH(created_date) = MONTH(CURRENT_DATE)", nativeQuery = true)
@@ -74,4 +76,8 @@ public interface InvoiceRepository extends CrudRepository<Invoice, Long> {
         AND c.email <> ''
         """, nativeQuery = true)
     List<Invoice> findInvoicesForReminders();
+
+    // Search invoices by invoice number or client name
+    @Query("SELECT i FROM Invoice i LEFT JOIN Client c ON i.client.id = c.id WHERE (LOWER(i.invoiceNumber) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR LOWER(c.contactName) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR LOWER(c.contactSurname) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR LOWER(c.entityName) LIKE LOWER(CONCAT('%', :searchTerm, '%'))) AND i.company.id = :companyId")
+    List<Invoice> searchInvoice(@Param("companyId") Long companyId, @Param("searchTerm") String searchTerm);
 }
