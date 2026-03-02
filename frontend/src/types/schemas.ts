@@ -113,6 +113,11 @@ export const ProductSchema = z.object({
     name: z.string().min(1, "Name is required"),
     description: z.string().optional(),
     price: z.coerce.number().min(0, "Price must be positive"),
+    // Inventory fields
+    trackInventory: z.boolean().optional().default(false),
+    quantityOnHand: z.coerce.number().min(0).optional(),
+    reorderPoint: z.coerce.number().min(0).optional(),
+    reorderQuantity: z.coerce.number().min(0).optional(),
 });
 
 export type ProductFormValues = z.infer<typeof ProductSchema>;

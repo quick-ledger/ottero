@@ -32,6 +32,33 @@ export interface Product {
     description: string;
     price: number;
     companyId: string;
+    // Inventory fields
+    quantityOnHand?: number;
+    reorderPoint?: number;
+    reorderQuantity?: number;
+    trackInventory?: boolean;
+    // Product attributes
+    attributeValues?: ProductAttributeValue[];
+}
+
+// Product Attribute types (EVA pattern)
+export type ProductAttributeDataType = 'STRING' | 'NUMBER' | 'DATE' | 'BOOLEAN';
+
+export interface ProductAttributeDefinition {
+    id: string;
+    name: string;
+    dataType: ProductAttributeDataType;
+    unit?: string;
+    companyId: string;
+}
+
+export interface ProductAttributeValue {
+    id?: string;
+    definitionId: string;
+    definitionName?: string;
+    dataType?: ProductAttributeDataType;
+    unit?: string;
+    value: string;
 }
 
 export interface Service {
@@ -300,4 +327,180 @@ export interface Job {
     attachments?: JobAttachment[];
     linkedQuotes?: LinkedQuote[];
     linkedInvoices?: LinkedInvoice[];
+}
+
+// Supplier types
+export interface Supplier {
+    id: string;
+    companyId: string;
+    name: string;
+    contactName?: string;
+    email?: string;
+    phone?: string;
+    address?: string;
+    paymentTerms?: string;
+    notes?: string;
+    isActive: boolean;
+}
+
+// Purchase Order types
+export type PurchaseOrderStatus = 'DRAFT' | 'SENT' | 'PARTIALLY_RECEIVED' | 'RECEIVED' | 'CANCELLED';
+
+export const PURCHASE_ORDER_STATUS_LABELS: Record<PurchaseOrderStatus, string> = {
+    DRAFT: 'Draft',
+    SENT: 'Sent',
+    PARTIALLY_RECEIVED: 'Partially Received',
+    RECEIVED: 'Received',
+    CANCELLED: 'Cancelled',
+};
+
+export interface PurchaseOrderItem {
+    id?: string;
+    itemOrder: number;
+    productItemId: string;
+    productName?: string;
+    quantityOrdered: number;
+    quantityReceived: number;
+    unitPrice: number;
+    gst: number;
+    total: number;
+}
+
+export interface PurchaseOrder {
+    id: string;
+    companyId: string;
+    supplierId: string;
+    supplierName?: string;
+    poNumber: string;
+    orderDate: string;
+    expectedDeliveryDate?: string;
+    status: PurchaseOrderStatus;
+    totalAmount: number;
+    gst: number;
+    notes?: string;
+    items: PurchaseOrderItem[];
+}
+
+export interface ReceiveItemsRequest {
+    purchaseOrderId: string;
+    notes?: string;
+    items: {
+        purchaseOrderItemId: string;
+        quantityReceived: number;
+    }[];
+}
+
+// Inventory types
+export type StockMovementType = 'SALE' | 'PURCHASE' | 'ADJUSTMENT' | 'TRANSFER' | 'RETURN';
+export type StockReferenceType = 'INVOICE' | 'PURCHASE_ORDER' | 'MANUAL';
+
+export const STOCK_MOVEMENT_TYPE_LABELS: Record<StockMovementType, string> = {
+    SALE: 'Sale',
+    PURCHASE: 'Purchase',
+    ADJUSTMENT: 'Adjustment',
+    TRANSFER: 'Transfer',
+    RETURN: 'Return',
+};
+
+export interface StockMovement {
+    id: string;
+    companyId: string;
+    productItemId: string;
+    productName?: string;
+    movementType: StockMovementType;
+    quantityChange: number;
+    quantityBefore: number;
+    quantityAfter: number;
+    referenceType: StockReferenceType;
+    referenceId?: string;
+    referenceNumber?: string;
+    notes?: string;
+    createdDate: string;
+}
+
+export interface LowStockAlert {
+    productId: string;
+    productName: string;
+    productCode?: string;
+    quantityOnHand: number;
+    reorderPoint: number;
+    reorderQuantity?: number;
+}
+
+export interface InventoryDashboard {
+    totalProducts: number;
+    lowStockCount: number;
+    outOfStockCount: number;
+    totalInventoryValue: number;
+    lowStockAlerts: LowStockAlert[];
+}
+
+export interface StockAdjustmentRequest {
+    newQuantity: number;
+    reason: string;
+}
+
+// Asset types
+export type AssetStatus = 'ACTIVE' | 'INACTIVE' | 'DISPOSED' | 'UNDER_MAINTENANCE';
+export type DepreciationMethod = 'STRAIGHT_LINE' | 'DECLINING_BALANCE' | 'NONE';
+
+export const ASSET_STATUS_LABELS: Record<AssetStatus, string> = {
+    ACTIVE: 'Active',
+    INACTIVE: 'Inactive',
+    DISPOSED: 'Disposed',
+    UNDER_MAINTENANCE: 'Under Maintenance',
+};
+
+export const DEPRECIATION_METHOD_LABELS: Record<DepreciationMethod, string> = {
+    STRAIGHT_LINE: 'Straight Line',
+    DECLINING_BALANCE: 'Declining Balance',
+    NONE: 'None',
+};
+
+export interface AssetAttributeDefinition {
+    id: string;
+    name: string;
+    dataType: ProductAttributeDataType;
+    unit?: string;
+    companyId: string;
+}
+
+export interface AssetAttributeValue {
+    id?: string;
+    definitionId: string;
+    definitionName?: string;
+    dataType?: ProductAttributeDataType;
+    unit?: string;
+    value: string;
+}
+
+export interface Asset {
+    id: string;
+    companyId: string;
+    assetGroupId?: string;
+    assetGroupName?: string;
+    name: string;
+    description?: string;
+    code?: string;
+    serialNumber?: string;
+    location?: string;
+    quantity?: number;
+    status?: AssetStatus;
+    // Financial tracking
+    purchaseDate?: string;
+    purchasePrice?: number;
+    currentValue?: number;
+    // Depreciation
+    depreciationMethod?: DepreciationMethod;
+    usefulLifeYears?: number;
+    salvageValue?: number;
+    // Attributes
+    valueDTOs?: AssetAttributeValue[];
+}
+
+export interface AssetGroup {
+    id: string;
+    companyId: string;
+    name: string;
+    description?: string;
 }

@@ -24,6 +24,24 @@ const ExpenseEditPage = lazy(() => import('@/pages/expenses/ExpenseEditPage'));
 const JobListPage = lazy(() => import('@/pages/jobs/JobListPage'));
 const JobEditPage = lazy(() => import('@/pages/jobs/JobEditPage'));
 
+// Inventory pages
+const InventoryDashboardPage = lazy(() => import('@/pages/inventory/InventoryDashboardPage'));
+const StockMovementsPage = lazy(() => import('@/pages/inventory/StockMovementsPage'));
+const SupplierListPage = lazy(() => import('@/pages/suppliers/SupplierListPage'));
+const SupplierEditPage = lazy(() => import('@/pages/suppliers/SupplierEditPage'));
+const PurchaseOrderListPage = lazy(() => import('@/pages/purchase-orders/PurchaseOrderListPage'));
+const PurchaseOrderEditPage = lazy(() => import('@/pages/purchase-orders/PurchaseOrderEditPage'));
+const AssetListPage = lazy(() => import('@/pages/assets/AssetListPage'));
+const AssetEditPage = lazy(() => import('@/pages/assets/AssetEditPage'));
+
+// Product pages
+const ProductListPage = lazy(() => import('@/pages/products/ProductListPage'));
+const ProductEditPage = lazy(() => import('@/pages/products/ProductEditPage'));
+
+// Service pages
+const ServiceListPage = lazy(() => import('@/pages/services/ServiceListPage'));
+const ServiceEditPage = lazy(() => import('@/pages/services/ServiceEditPage'));
+
 const SequenceConfigPage = lazy(() => import('@/pages/settings/SequenceConfigPage'));
 const TemplateConfigPage = lazy(() => import('@/pages/settings/TemplateConfigPage'));
 const PricingPage = lazy(() => import('@/pages/settings/PricingPage'));
@@ -109,6 +127,26 @@ function App() {
                 <Route path="expenses/:id" element={<ExpenseEditPage />} />
                 <Route path="jobs" element={<JobListPage />} />
                 <Route path="jobs/:id" element={<JobEditPage />} />
+
+                {/* Product routes */}
+                <Route path="products" element={<ProductListPage />} />
+                <Route path="products/:id" element={<ProductEditPage />} />
+
+                {/* Service routes */}
+                <Route path="services" element={<ServiceListPage />} />
+                <Route path="services/:id" element={<ServiceEditPage />} />
+
+                {/* Inventory routes */}
+                <Route path="inventory" element={<InventoryDashboardPage />} />
+                <Route path="inventory/movements" element={<StockMovementsPage />} />
+                <Route path="suppliers" element={<SupplierListPage />} />
+                <Route path="suppliers/:id" element={<SupplierEditPage />} />
+                <Route path="purchase-orders" element={<PurchaseOrderListPage />} />
+                <Route path="purchase-orders/:id" element={<PurchaseOrderEditPage />} />
+
+                {/* Asset routes */}
+                <Route path="assets" element={<AssetListPage />} />
+                <Route path="assets/:id" element={<AssetEditPage />} />
 
               </Route>
             </Route>

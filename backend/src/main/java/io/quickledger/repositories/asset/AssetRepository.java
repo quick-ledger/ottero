@@ -1,20 +1,26 @@
 package io.quickledger.repositories.asset;
 
 import io.quickledger.entities.asset.Asset;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 import java.util.Optional;
 /*
     * For the security reasons we should never directly access asset by AssetId alone, it should always come with companyId
  */
-public interface AssetRepository extends CrudRepository<Asset, Long>{
+public interface AssetRepository extends JpaRepository<Asset, Long>{
     //    Optional<Asset> findById(Long id);
     //    void deleteByAssetId(Long assetId);
 
     List<Asset> findAllByCompanyId(Long companyId);
 
+    Page<Asset> findAllByCompanyId(Long companyId, Pageable pageable);
+
     Optional<Asset> findByIdAndCompanyId(Long id, Long companyId);
 
     void deleteByIdAndCompanyId(Long id, Long companyId);
+
+    List<Asset> findAllByCompanyIdAndAssetGroupId(Long companyId, Long assetGroupId);
 }

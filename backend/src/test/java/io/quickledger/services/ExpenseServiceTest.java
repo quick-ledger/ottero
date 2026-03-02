@@ -97,7 +97,7 @@ class ExpenseServiceTest {
         testExpense.setId(1L);
         testExpense.setCompany(testCompany);
         testExpense.setVendor("Test Vendor");
-        testExpense.setExpenseDescription("Test expense");
+        testExpense.setNotes("Test expense");
         testExpense.setAmount(new BigDecimal("110.00"));
         testExpense.setCategory(ExpenseCategory.OFFICE_SUPPLIES);
         testExpense.setStatus(ExpenseStatus.PENDING);
@@ -108,7 +108,7 @@ class ExpenseServiceTest {
         // Setup test DTO
         testExpenseDto = new ExpenseDto();
         testExpenseDto.setVendor("Test Vendor");
-        testExpenseDto.setExpenseDescription("Test expense");
+        testExpenseDto.setNotes("Test expense");
         testExpenseDto.setAmount(new BigDecimal("110.00"));
         testExpenseDto.setCategory(ExpenseCategory.OFFICE_SUPPLIES);
         testExpenseDto.setStatus(ExpenseStatus.PENDING);

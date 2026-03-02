@@ -33,8 +33,9 @@ public class PlanService {
         // Advanced plan features (includes Basic features)
         RECURRING_INVOICES,
         EXPENSE_MANAGEMENT,
-        JOB_MANAGEMENT,           // Coming Soon
-        ASSET_MANAGEMENT,         // Coming Soon
+        JOB_MANAGEMENT,
+        ASSET_MANAGEMENT,
+        INVENTORY_MANAGEMENT,     // Inventory tracking, suppliers, purchase orders
         ADVANCED_ANALYTICS        // Coming Soon
     }
 
@@ -98,8 +99,10 @@ public class PlanService {
             Feature.EMPLOYEE_CRM,
             Feature.RECURRING_INVOICES,
             Feature.EXPENSE_MANAGEMENT,
-            Feature.JOB_MANAGEMENT
-            // ASSET_MANAGEMENT, ADVANCED_ANALYTICS - Coming Soon
+            Feature.JOB_MANAGEMENT,
+            Feature.ASSET_MANAGEMENT,
+            Feature.INVENTORY_MANAGEMENT
+            // ADVANCED_ANALYTICS - Coming Soon
     );
 
     /**

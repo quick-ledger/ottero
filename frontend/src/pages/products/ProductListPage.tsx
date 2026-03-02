@@ -37,7 +37,9 @@ export default function ProductListPage() {
             <div className="flex justify-between items-center mb-6">
                 <div>
                     <h1 className="text-3xl font-bold tracking-tight">Products</h1>
-                    <p className="text-muted-foreground mt-1">Manage your product catalog.</p>
+                    <p className="text-muted-foreground mt-1">
+                        Items you sell to customers. Products appear on invoices and quotes, and can have inventory tracking enabled.
+                    </p>
                 </div>
                 <Button onClick={() => navigate('/products/new')}>
                     <Plus className="mr-2 h-4 w-4" />
@@ -72,14 +74,14 @@ export default function ProductListPage() {
                                     Loading products...
                                 </TableCell>
                             </TableRow>
-                        ) : data?.content.length === 0 ? (
+                        ) : data?.content?.length === 0 ? (
                             <TableRow>
                                 <TableCell colSpan={4} className="h-24 text-center">
                                     No products found.
                                 </TableCell>
                             </TableRow>
                         ) : (
-                            data?.content.map((product) => (
+                            data?.content?.map((product) => (
                                 <TableRow key={product.id}>
                                     <TableCell className="font-medium">
                                         <Link to={`/products/${product.id}`} className="hover:underline flex items-center">
