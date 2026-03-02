@@ -47,6 +47,31 @@ const Navbar = () => {
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button variant="ghost" className="text-foreground/60 hover:text-foreground/80 px-2 justify-start md:justify-center w-full md:w-auto">
+                                Inventory <ChevronDown className="ml-1 h-4 w-4" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="start">
+                            <DropdownMenuItem asChild>
+                                <Link to="/inventory" className="cursor-pointer">Inventory Dashboard</Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem asChild>
+                                <Link to="/inventory/movements" className="cursor-pointer">Stock Movements</Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem asChild>
+                                <Link to="/products" className="cursor-pointer">Products</Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem asChild>
+                                <Link to="/suppliers" className="cursor-pointer">Suppliers</Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem asChild>
+                                <Link to="/purchase-orders" className="cursor-pointer">Purchase Orders</Link>
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="text-foreground/60 hover:text-foreground/80 px-2 justify-start md:justify-center w-full md:w-auto">
                                 Settings <ChevronDown className="ml-1 h-4 w-4" />
                             </Button>
                         </DropdownMenuTrigger>
@@ -71,6 +96,15 @@ const Navbar = () => {
                             )}
                             <DropdownMenuItem asChild>
                                 <Link to="/customers" className="cursor-pointer">Customers</Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem asChild>
+                                <Link to="/products" className="cursor-pointer">Products</Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem asChild>
+                                <Link to="/services" className="cursor-pointer">Services</Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem asChild>
+                                <Link to="/assets" className="cursor-pointer">Assets</Link>
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
                             <DropdownMenuLabel>Quote and Invoice Settings</DropdownMenuLabel>

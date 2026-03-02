@@ -5,6 +5,7 @@ import io.quickledger.entities.Company;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -47,6 +48,23 @@ public class ProductItem extends BaseEntity {
     @ElementCollection
     @Column(name = "images", nullable = true, columnDefinition="MEDIUMBLOB")
     private List<byte[]> images;
+
+    // Inventory tracking fields
+    @Column(name = "quantity_on_hand", nullable = false, columnDefinition = "integer default 0")
+    private Integer quantityOnHand = 0;
+
+    @Column(name = "reorder_point")
+    private Integer reorderPoint;
+
+    @Column(name = "reorder_quantity")
+    private Integer reorderQuantity;
+
+    @Column(name = "track_inventory", nullable = false, columnDefinition = "boolean default false")
+    private Boolean trackInventory = false;
+
+    // EVA pattern for flexible attributes
+    @OneToMany(mappedBy = "productItem", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<ProductItemAttributeValue> attributeValues = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -126,5 +144,45 @@ public class ProductItem extends BaseEntity {
 
     public void setImages(List<byte[]> images) {
         this.images = images;
+    }
+
+    public Integer getQuantityOnHand() {
+        return quantityOnHand;
+    }
+
+    public void setQuantityOnHand(Integer quantityOnHand) {
+        this.quantityOnHand = quantityOnHand;
+    }
+
+    public Integer getReorderPoint() {
+        return reorderPoint;
+    }
+
+    public void setReorderPoint(Integer reorderPoint) {
+        this.reorderPoint = reorderPoint;
+    }
+
+    public Integer getReorderQuantity() {
+        return reorderQuantity;
+    }
+
+    public void setReorderQuantity(Integer reorderQuantity) {
+        this.reorderQuantity = reorderQuantity;
+    }
+
+    public Boolean getTrackInventory() {
+        return trackInventory;
+    }
+
+    public void setTrackInventory(Boolean trackInventory) {
+        this.trackInventory = trackInventory;
+    }
+
+    public List<ProductItemAttributeValue> getAttributeValues() {
+        return attributeValues;
+    }
+
+    public void setAttributeValues(List<ProductItemAttributeValue> attributeValues) {
+        this.attributeValues = attributeValues;
     }
 }

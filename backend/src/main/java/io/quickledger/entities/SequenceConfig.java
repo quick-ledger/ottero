@@ -11,7 +11,8 @@ public class SequenceConfig {
     public enum EntityType {
         INVOICE,
         QUOTE,
-        JOB
+        JOB,
+        PURCHASE_ORDER
     }
 
     @Id

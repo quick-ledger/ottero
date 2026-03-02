@@ -57,6 +57,7 @@ public class InvoiceService {
     private final StripeService stripeService;
     private final TempTokenService tempTokenService;
     private final PlanService planService;
+    private final InventoryService inventoryService;
 
     @org.springframework.beans.factory.annotation.Value("${application.frontend.url}")
     private String applicationFrontendUrl;
@@ -67,7 +68,7 @@ public class InvoiceService {
             InvoiceMapper invoiceMapper, ClientMapper clientMapper, InvoiceItemMapper invoiceItemMapper,
             QuoteRepository quoteRepository, SequenceConfigRepository sequenceConfigRepository,
             PdfService pdfService, ObjectMapper objectMapper, EmailService emailService, StripeService stripeService,
-            TempTokenService tempTokenService, PlanService planService) {
+            TempTokenService tempTokenService, PlanService planService, InventoryService inventoryService) {
         this.invoiceRepository = invoiceRepository;
         this.clientService = clientService;
         this.clientRepository = clientRepository;
@@ -83,6 +84,7 @@ public class InvoiceService {
         this.stripeService = stripeService;
         this.tempTokenService = tempTokenService;
         this.planService = planService;
+        this.inventoryService = inventoryService;
     }
 
     public InvoiceDto createUpdate(Long companyId, InvoiceDto invoiceDto, final User user) {
@@ -503,6 +505,9 @@ public class InvoiceService {
         if (invoice.getStatus() == Invoice.InvoiceStatus.DRAFT) {
             invoice.setStatus(Invoice.InvoiceStatus.SENT);
             invoiceRepository.save(invoice);
+
+            // Deduct stock for tracked products
+            inventoryService.processInvoiceStockDeduction(invoice);
         }
 
         InvoiceDto invoiceDto = invoiceMapper.toDto(invoice, false);

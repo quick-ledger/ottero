@@ -4,6 +4,8 @@ import io.quickledger.entities.BaseEntity;
 import io.quickledger.entities.Company;
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,6 +48,37 @@ public class Asset extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "status", length = 100, nullable = true, columnDefinition = "varchar(100) default 'ACTIVE'")
     private Status status;
+
+    // Asset identification
+    @Column(name = "code", length = 100)
+    private String code;
+
+    @Column(name = "serial_number", length = 200)
+    private String serialNumber;
+
+    @Column(name = "location", length = 500)
+    private String location;
+
+    // Financial tracking
+    @Column(name = "purchase_date")
+    private LocalDate purchaseDate;
+
+    @Column(name = "purchase_price", precision = 19, scale = 2)
+    private BigDecimal purchasePrice;
+
+    @Column(name = "current_value", precision = 19, scale = 2)
+    private BigDecimal currentValue;
+
+    // Depreciation
+    @Enumerated(EnumType.STRING)
+    @Column(name = "depreciation_method", length = 50)
+    private DepreciationMethod depreciationMethod;
+
+    @Column(name = "useful_life_years")
+    private Integer usefulLifeYears;
+
+    @Column(name = "salvage_value", precision = 19, scale = 2)
+    private BigDecimal salvageValue;
 
     // Assume images are stored internally in DB nor externally thus not using URLs
     @ElementCollection
@@ -152,11 +185,84 @@ public class Asset extends BaseEntity {
     }
 
     public enum Status {
-        ACTIVE, INACTIVE, DISPOSED
+        ACTIVE, INACTIVE, DISPOSED, UNDER_MAINTENANCE
     }
 
-//    public enum Unit {
-//        PIECES, KILOGRAMS, LITERS, METERS, SQUARE_METERS, CUBIC_METERS, HOURS, KILOMETERS, LITERS_PER_KILOMETER, KILOMETERS_PER_HOUR
-//    }
+    public enum DepreciationMethod {
+        STRAIGHT_LINE, DECLINING_BALANCE, NONE
+    }
 
+    // Getters and setters for new fields
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getSerialNumber() {
+        return serialNumber;
+    }
+
+    public void setSerialNumber(String serialNumber) {
+        this.serialNumber = serialNumber;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public LocalDate getPurchaseDate() {
+        return purchaseDate;
+    }
+
+    public void setPurchaseDate(LocalDate purchaseDate) {
+        this.purchaseDate = purchaseDate;
+    }
+
+    public BigDecimal getPurchasePrice() {
+        return purchasePrice;
+    }
+
+    public void setPurchasePrice(BigDecimal purchasePrice) {
+        this.purchasePrice = purchasePrice;
+    }
+
+    public BigDecimal getCurrentValue() {
+        return currentValue;
+    }
+
+    public void setCurrentValue(BigDecimal currentValue) {
+        this.currentValue = currentValue;
+    }
+
+    public DepreciationMethod getDepreciationMethod() {
+        return depreciationMethod;
+    }
+
+    public void setDepreciationMethod(DepreciationMethod depreciationMethod) {
+        this.depreciationMethod = depreciationMethod;
+    }
+
+    public Integer getUsefulLifeYears() {
+        return usefulLifeYears;
+    }
+
+    public void setUsefulLifeYears(Integer usefulLifeYears) {
+        this.usefulLifeYears = usefulLifeYears;
+    }
+
+    public BigDecimal getSalvageValue() {
+        return salvageValue;
+    }
+
+    public void setSalvageValue(BigDecimal salvageValue) {
+        this.salvageValue = salvageValue;
+    }
 }

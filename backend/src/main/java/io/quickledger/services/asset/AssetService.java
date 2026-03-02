@@ -4,13 +4,17 @@ import io.quickledger.dto.asset.AssetAttributeValueDto;
 import io.quickledger.entities.asset.Asset;
 import io.quickledger.entities.asset.AssetAttributeValue;
 import io.quickledger.entities.Company;
+import io.quickledger.entities.User;
 import io.quickledger.mappers.asset.AssetMapper;
 import io.quickledger.mappers.asset.AssetAttributeDefinitionMapper;
 import io.quickledger.mappers.asset.AssetAttributeValueMapper;
 import io.quickledger.repositories.asset.AssetRepository;
 import io.quickledger.repositories.asset.AssetAttributeValueRepository;
+import io.quickledger.services.PlanService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import io.quickledger.dto.asset.AssetDto;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,9 +34,14 @@ public class AssetService {
     private final AssetAttributeDefinitionMapper assetAttributeDefinitionMapper;
     private final AssetDefinitionService assetAttributeDefinitionService;
     private final AssetAttributeValueService assetAttributeValueService;
+    private final PlanService planService;
 
     public AssetService(AssetRepository assetRepository, AssetAttributeValueRepository assetAttributeValueRepository,
-                        AssetMapper assetMapper, AssetAttributeValueMapper assetAttributeValueMapper, AssetAttributeDefinitionMapper assetAttributeDefinitionMapper, AssetDefinitionService assetAttributeDefinitionService, AssetAttributeValueService assetAttributeValueService) {
+                        AssetMapper assetMapper, AssetAttributeValueMapper assetAttributeValueMapper,
+                        AssetAttributeDefinitionMapper assetAttributeDefinitionMapper,
+                        AssetDefinitionService assetAttributeDefinitionService,
+                        AssetAttributeValueService assetAttributeValueService,
+                        PlanService planService) {
         this.assetRepository = assetRepository;
         this.assetAttributeValueRepository = assetAttributeValueRepository;
         this.assetMapper = assetMapper;
@@ -40,9 +49,16 @@ public class AssetService {
         this.assetAttributeDefinitionMapper = assetAttributeDefinitionMapper;
         this.assetAttributeDefinitionService = assetAttributeDefinitionService;
         this.assetAttributeValueService = assetAttributeValueService;
+        this.planService = planService;
     }
 
-    public List<AssetDto> getAllCompanyAssets(Long companyId) {
+    private void validateAccess(User user) {
+        planService.requireFeature(user, PlanService.Feature.ASSET_MANAGEMENT);
+    }
+
+    @Transactional(readOnly = true)
+    public List<AssetDto> getAllCompanyAssets(Long companyId, User user) {
+        validateAccess(user);
         List<Asset> assets = assetRepository.findAllByCompanyId(companyId);
         logger.debug("==> Assets fetched from repository: {}", assets.toString());
         List<AssetDto> assetDtos = assetMapper.toAssetDtoList(assets);
@@ -50,32 +66,45 @@ public class AssetService {
         return assetDtos;
     }
 
-    //MBH changed to optional
-    public Optional<AssetDto> getAssetDtoByIdAndCompanyId(Long id, Long companyId) {
+    @Transactional(readOnly = true)
+    public Page<AssetDto> getAllCompanyAssets(Long companyId, Pageable pageable, User user) {
+        validateAccess(user);
+        return assetRepository.findAllByCompanyId(companyId, pageable)
+                .map(assetMapper::toDto);
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<AssetDto> getAssetDtoByIdAndCompanyId(Long id, Long companyId, User user) {
+        validateAccess(user);
         return assetRepository.findByIdAndCompanyId(id, companyId).map(assetMapper::toDto);
     }
 
-    public Optional<Asset> getAssetEntityByIdAndCompanyId(Long id, Long companyId) {
+    @Transactional(readOnly = true)
+    public Optional<Asset> getAssetEntityByIdAndCompanyId(Long id, Long companyId, User user) {
+        validateAccess(user);
         return assetRepository.findByIdAndCompanyId(id, companyId);
     }
 
 
 
     @Transactional
-    public AssetDto saveAsset(AssetDto assetDto, Company company) {
+    public AssetDto saveAsset(AssetDto assetDto, Company company, User user) {
+        validateAccess(user);
         Asset asset = assetMapper.toEntity(assetDto);
         asset.setCompany(company);
         Asset savedAsset = assetRepository.save(asset);
 
 
-        for (AssetAttributeValueDto valueDto : assetDto.getValueDTOs()) {
-            //TODO convert
-            AssetAttributeValue value = new AssetAttributeValue();
-            //TODO take this out of the loop and use saveAll()
-            assetAttributeValueRepository.save(value);
+        if (assetDto.getValueDTOs() != null) {
+            for (AssetAttributeValueDto valueDto : assetDto.getValueDTOs()) {
+                //TODO convert
+                AssetAttributeValue value = new AssetAttributeValue();
+                //TODO take this out of the loop and use saveAll()
+                assetAttributeValueRepository.save(value);
+            }
         }
 
-        return assetDto;//TODO fix this response;
+        return assetMapper.toDto(savedAsset);
     }
 
 //        if (assetDto.getValueDTOs() != null && !assetDto.getAssetAttributeValues().isEmpty()) {
@@ -143,7 +172,9 @@ public class AssetService {
 */
 
 
-    public void deleteAsset(Long id, Long companyId) {
+    @Transactional
+    public void deleteAsset(Long id, Long companyId, User user) {
+        validateAccess(user);
         assetRepository.deleteByIdAndCompanyId(id, companyId);
     }
 }
