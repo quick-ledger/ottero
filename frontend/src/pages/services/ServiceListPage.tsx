@@ -72,14 +72,14 @@ export default function ServiceListPage() {
                                     Loading services...
                                 </TableCell>
                             </TableRow>
-                        ) : data?.content.length === 0 ? (
+                        ) : data?.content?.length === 0 ? (
                             <TableRow>
                                 <TableCell colSpan={4} className="h-24 text-center">
                                     No services found.
                                 </TableCell>
                             </TableRow>
                         ) : (
-                            data?.content.map((service) => (
+                            data?.content?.map((service) => (
                                 <TableRow key={service.id}>
                                     <TableCell className="font-medium">
                                         <Link to={`/services/${service.id}`} className="hover:underline flex items-center">
