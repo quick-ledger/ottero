@@ -18,6 +18,8 @@ import io.quickledger.repositories.ClientRepository;
 import io.quickledger.repositories.InvoiceRepository;
 import io.quickledger.repositories.SequenceConfigRepository;
 import io.quickledger.repositories.quote.QuoteRepository;
+import io.quickledger.repositories.product.ProductItemRepository;
+import io.quickledger.repositories.serviceitem.ServiceItemRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.transaction.annotation.Transactional;
 import org.apache.commons.lang3.StringUtils;
@@ -58,6 +60,8 @@ public class InvoiceService {
     private final TempTokenService tempTokenService;
     private final PlanService planService;
     private final InventoryService inventoryService;
+    private final ProductItemRepository productItemRepository;
+    private final ServiceItemRepository serviceItemRepository;
 
     @org.springframework.beans.factory.annotation.Value("${application.frontend.url}")
     private String applicationFrontendUrl;
@@ -68,7 +72,8 @@ public class InvoiceService {
             InvoiceMapper invoiceMapper, ClientMapper clientMapper, InvoiceItemMapper invoiceItemMapper,
             QuoteRepository quoteRepository, SequenceConfigRepository sequenceConfigRepository,
             PdfService pdfService, ObjectMapper objectMapper, EmailService emailService, StripeService stripeService,
-            TempTokenService tempTokenService, PlanService planService, InventoryService inventoryService) {
+            TempTokenService tempTokenService, PlanService planService, InventoryService inventoryService,
+            ProductItemRepository productItemRepository, ServiceItemRepository serviceItemRepository) {
         this.invoiceRepository = invoiceRepository;
         this.clientService = clientService;
         this.clientRepository = clientRepository;
@@ -85,6 +90,8 @@ public class InvoiceService {
         this.tempTokenService = tempTokenService;
         this.planService = planService;
         this.inventoryService = inventoryService;
+        this.productItemRepository = productItemRepository;
+        this.serviceItemRepository = serviceItemRepository;
     }
 
     public InvoiceDto createUpdate(Long companyId, InvoiceDto invoiceDto, final User user) {
@@ -127,15 +134,27 @@ public class InvoiceService {
         userCompanyService.checkUserBelongs(user, companyId);
         invoice.setUser(user);
 
-        // Set the invoice reference on each invoice item and clear transient entity
-        // references
-        if (invoice.getInvoiceItems() != null)
+        // Set the invoice reference on each invoice item and resolve entity references
+        if (invoice.getInvoiceItems() != null) {
             for (InvoiceItem invoiceItem : invoice.getInvoiceItems()) {
                 invoiceItem.setInvoice(invoice);
-                // Clear transient references to avoid "unsaved transient instance" error
-                invoiceItem.setServiceItem(null);
-                invoiceItem.setProductItem(null);
+                // Resolve product/service references from IDs
+                if (invoiceItem.getProductItem() != null && invoiceItem.getProductItem().getId() != null) {
+                    invoiceItem.setProductItem(
+                        productItemRepository.findById(invoiceItem.getProductItem().getId()).orElse(null)
+                    );
+                } else {
+                    invoiceItem.setProductItem(null);
+                }
+                if (invoiceItem.getServiceItem() != null && invoiceItem.getServiceItem().getId() != null) {
+                    invoiceItem.setServiceItem(
+                        serviceItemRepository.findById(invoiceItem.getServiceItem().getId()).orElse(null)
+                    );
+                } else {
+                    invoiceItem.setServiceItem(null);
+                }
             }
+        }
 
         calculateInvoiceTotals(invoice);
 

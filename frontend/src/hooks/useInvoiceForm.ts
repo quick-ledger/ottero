@@ -13,7 +13,7 @@ export const useInvoiceForm = (defaultValues?: Partial<InvoiceFormValues>) => {
             gst: 0,
             totalPrice: 0,
             status: 'DRAFT',
-            issueDate: new Date().toISOString().split('T')[0],
+            invoiceDate: new Date().toISOString().split('T')[0],
             dueDate: new Date(new Date().setDate(new Date().getDate() + 14)).toISOString().split('T')[0],
             isRecurring: false,
             recurringFrequency: 'MONTHLY',

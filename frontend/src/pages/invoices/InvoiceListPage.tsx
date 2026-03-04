@@ -103,7 +103,7 @@ export default function InvoiceListPage() {
                                         {invoice.clientFirstname} {invoice.clientLastname}
                                         {invoice.clientEntityName && <div className="text-xs text-muted-foreground">{invoice.clientEntityName}</div>}
                                     </TableCell>
-                                    <TableCell>{invoice.issueDate}</TableCell>
+                                    <TableCell>{invoice.invoiceDate}</TableCell>
                                     <TableCell>{invoice.dueDate}</TableCell>
                                     <TableCell className="text-right">
                                         ${invoice.totalPrice.toFixed(2)}

@@ -80,7 +80,7 @@ export default function InvoiceEditPage() {
                 clientPhone: invoice.clientPhone || '',
                 notes: invoice.notes || '',
                 status: invoice.status,
-                issueDate: invoice.issueDate?.substring(0, 10),
+                invoiceDate: invoice.invoiceDate?.substring(0, 10),
                 dueDate: invoice.dueDate?.substring(0, 10),
                 isRecurring: invoice.isRecurring || false,
                 recurringFrequency: invoice.recurringFrequency || 'MONTHLY',
@@ -358,7 +358,7 @@ export default function InvoiceEditPage() {
                             <CardContent className="space-y-4">
                                 <FormField
                                     control={form.control}
-                                    name="issueDate"
+                                    name="invoiceDate"
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>Issue Date</FormLabel>

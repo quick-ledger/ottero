@@ -1,5 +1,13 @@
 import { z } from 'zod';
 
+// Helper for ID fields that can be null, undefined, or a number/string
+const optionalIdSchema = z.union([
+    z.string(),
+    z.number().transform(String),
+    z.null(),
+    z.undefined(),
+]).optional();
+
 export const QuoteItemSchema = z.object({
     id: z.coerce.string().optional(),
     itemOrder: z.number(),
@@ -10,8 +18,8 @@ export const QuoteItemSchema = z.object({
     gst: z.coerce.number().refine((val) => val === 0 || val === 10, {
         message: "GST must be 0 or 10",
     }),
-    serviceItemId: z.string().nullable().optional(),
-    productItemId: z.string().nullable().optional(),
+    serviceItemId: optionalIdSchema,
+    productItemId: optionalIdSchema,
 });
 
 export const QuoteSchema = z.object({
@@ -45,9 +53,9 @@ export const QuoteSchema = z.object({
 export const InvoiceItemSchema = QuoteItemSchema; // Re-use for now as structure is identical
 
 export const InvoiceSchema = z.object({
-    id: z.string().optional(),
+    id: z.coerce.string().optional(),
     invoiceNumber: z.string().optional(),
-    issueDate: z.string().min(1, "Date is required"),
+    invoiceDate: z.string().min(1, "Date is required"),
     dueDate: z.string().min(1, "Due date is required"),
     status: z.enum(['DRAFT', 'SENT', 'PAID', 'CANCELLED']).default('DRAFT'),
 
@@ -57,7 +65,7 @@ export const InvoiceSchema = z.object({
     totalPrice: z.coerce.number(),
     gst: z.coerce.number(),
 
-    clientId: z.string().optional(),
+    clientId: z.coerce.string().optional(),
     clientFirstname: z.string().min(1, "First Name is required"),
     clientLastname: z.string().min(1, "Last Name is required"),
     clientEntityName: z.string().optional(),
@@ -67,7 +75,7 @@ export const InvoiceSchema = z.object({
     notes: z.string().optional(),
 
     invoiceItems: z.array(InvoiceItemSchema),
-    companyId: z.string().optional(),
+    companyId: z.coerce.string().optional(),
 
     // Recurring invoice fields
     isRecurring: z.boolean().optional(),
@@ -75,7 +83,7 @@ export const InvoiceSchema = z.object({
     recurringEndDate: z.string().optional(),
     recurringAutoSend: z.boolean().optional(),
     nextRecurringDate: z.string().optional(),
-    parentInvoiceId: z.string().optional(),
+    parentInvoiceId: optionalIdSchema,
 });
 
 export type QuoteFormValues = z.infer<typeof QuoteSchema>;
