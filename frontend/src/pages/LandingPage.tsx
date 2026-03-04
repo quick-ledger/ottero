@@ -73,7 +73,7 @@ const LandingPage = () => {
                     <FeatureCard
                         icon={<DollarSign className="h-10 w-10 text-green-500" />}
                         title="Get Paid Faster"
-                        description="Turn accepted quotes into tax invoices instantly. Send professional invoices in seconds so you get paid sooner."
+                        description="Turn accepted quotes into tax invoices instantly. Automated payment reminders help you get paid sooner."
                     />
                     <FeatureCard
                         icon={<Users className="h-10 w-10 text-purple-500" />}
@@ -82,13 +82,13 @@ const LandingPage = () => {
                     />
                     <FeatureCard
                         icon={<Briefcase className="h-10 w-10 text-orange-500" />}
-                        title="Job Tracking"
-                        description="Stay on top of every job. Track progress, assign tasks, and ensure nothing falls through the cracks."
+                        title="Job & Time Tracking"
+                        description="Stay on top of every job. Log time entries, track progress, and ensure nothing falls through the cracks."
                     />
                     <FeatureCard
                         icon={<Wrench className="h-10 w-10 text-red-500" />}
-                        title="Asset Management"
-                        description="Never lose a tool again. Track who has what equipment and manage your assets efficiently."
+                        title="Inventory & Assets"
+                        description="Track products and stock levels, manage purchase orders, and know where every tool and asset is."
                     />
                     <FeatureCard
                         icon={<LayoutDashboard className="h-10 w-10 text-blue-500" />}
