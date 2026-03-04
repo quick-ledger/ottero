@@ -412,6 +412,7 @@ export default function ExpenseEditPage() {
                                     accept="image/*,application/pdf"
                                     maxSizeMB={10}
                                     uploadLabel="Upload Receipt"
+                                    showCamera={true}
                                     onUploadSuccess={() => {
                                         refetch();
                                         toast.success('Receipt uploaded');

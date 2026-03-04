@@ -223,6 +223,7 @@ export default function CompanyEditPage() {
                                         maxSizeMB={5}
                                         showPreview={true}
                                         showDelete={true}
+                                        showCamera={true}
                                         uploadLabel="Upload Logo"
                                         onUploadSuccess={() => {
                                             toast.success('Company logo updated!');
