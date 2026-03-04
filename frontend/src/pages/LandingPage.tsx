@@ -4,6 +4,7 @@ import { useAuth0 } from '@auth0/auth0-react';
 import { ArrowRight, Briefcase, DollarSign, FileText, LayoutDashboard, Users, Wrench } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
+import { PLANS_CONFIG } from '@/lib/plans';
 
 const LandingPage = () => {
     const { loginWithRedirect, isAuthenticated, isLoading } = useAuth0();
@@ -83,13 +84,11 @@ const LandingPage = () => {
                         icon={<Briefcase className="h-10 w-10 text-orange-500" />}
                         title="Job Tracking"
                         description="Stay on top of every job. Track progress, assign tasks, and ensure nothing falls through the cracks."
-                        badge="Coming Soon"
                     />
                     <FeatureCard
                         icon={<Wrench className="h-10 w-10 text-red-500" />}
                         title="Asset Management"
                         description="Never lose a tool again. Track who has what equipment and manage your assets efficiently."
-                        badge="Coming Soon"
                     />
                     <FeatureCard
                         icon={<LayoutDashboard className="h-10 w-10 text-blue-500" />}
@@ -109,40 +108,19 @@ const LandingPage = () => {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        {/* Free Plan */}
-                        <PricingCard
-                            name="Free"
-                            price="$0"
-                            description="Perfect for getting started"
-                            features={['Up to 5 Quotes and Invoices/month', 'Email Support', 'Custom Templates', 'Customer & Employee CRM']}
-                            buttonText="Get Started for Free"
-                            variant="outline"
-                            onSubscribe={handleLogin}
-                        />
-
-                        {/* Basic Plan */}
-                        <PricingCard
-                            name="Basic"
-                            price="$5/mo"
-                            description="For growing small businesses"
-                            features={['1 Month Free Trial', 'Unlimited Quotes', 'Unlimited Invoices', 'Priority Support']}
-                            buttonText="Start 1 Month Free Trial"
-                            variant="default"
-                            isPopular={true}
-                            onSubscribe={handleLogin}
-                        />
-
-                        {/* Advanced Plan */}
-                        <PricingCard
-                            name="Advanced"
-                            price="$15/mo"
-                            description="For established or larger businesses"
-                            features={['Everything in Basic', 'Recurring Invoices', 'Expense Management', 'Job Management (Coming Soon)', 'Asset Management (Coming Soon)', 'Advanced Analytics (Coming Soon)']}
-                            buttonText="Get Started"
-                            variant="secondary"
-                            onSubscribe={handleLogin}
-                            disabled={false}
-                        />
+                        {PLANS_CONFIG.map((plan) => (
+                            <PricingCard
+                                key={plan.name}
+                                name={plan.name}
+                                price={plan.price}
+                                description={plan.description}
+                                features={plan.features}
+                                buttonText={plan.name === 'Free' ? 'Get Started for Free' : plan.name === 'Basic' ? 'Start 1 Month Free Trial' : 'Get Started'}
+                                variant={plan.variant}
+                                isPopular={plan.isPopular}
+                                onSubscribe={handleLogin}
+                            />
+                        ))}
                     </div>
                 </div>
             </section>

@@ -61,7 +61,8 @@ const PLAN_FEATURES: Record<Plan, Set<Feature>> = {
         'RECURRING_INVOICES',
         'EXPENSE_MANAGEMENT',
         'JOB_MANAGEMENT',
-        // Coming Soon: ASSET_MANAGEMENT, ADVANCED_ANALYTICS
+        'ASSET_MANAGEMENT',
+        // Coming Soon: ADVANCED_ANALYTICS
     ]),
 };
 
@@ -103,9 +104,55 @@ export const FEATURE_LABELS: Record<Feature, string> = {
 
 // Features marked as "Coming Soon"
 export const COMING_SOON_FEATURES: Set<Feature> = new Set([
-    'ASSET_MANAGEMENT',
     'ADVANCED_ANALYTICS',
 ]);
+
+// Shared plan configuration for pricing pages
+export interface PlanConfig {
+    id: string;
+    name: Plan;
+    price: string;
+    description: string;
+    features: string[];
+    variant: 'default' | 'outline' | 'secondary';
+    isPopular?: boolean;
+    disabled?: boolean;
+}
+
+export const PLANS_CONFIG: PlanConfig[] = [
+    {
+        id: 'price_free',
+        name: 'Free',
+        price: '$0',
+        description: 'Perfect for getting started',
+        features: ['Up to 5 Quotes and Invoices/month', 'Email Support', 'Custom Templates', 'Customer & Employee CRM'],
+        variant: 'outline',
+    },
+    {
+        id: 'price_basic',
+        name: 'Basic',
+        price: '$5/mo',
+        description: 'For growing small businesses',
+        features: ['1 Month Free Trial', 'Unlimited Quotes', 'Unlimited Invoices', 'Priority Support'],
+        variant: 'default',
+        isPopular: true,
+    },
+    {
+        id: 'price_advanced',
+        name: 'Advanced',
+        price: '$15/mo',
+        description: 'For established or larger businesses',
+        features: [
+            'Everything in Basic',
+            'Recurring Invoices',
+            'Expense Management',
+            'Job Management',
+            'Asset Management',
+            'Advanced Analytics (Coming Soon)',
+        ],
+        variant: 'secondary',
+    },
+];
 
 /**
  * Normalize plan name from API response.

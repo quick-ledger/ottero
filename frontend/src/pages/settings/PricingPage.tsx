@@ -1,5 +1,5 @@
 import { useAuth0 } from '@auth0/auth0-react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useAppStore } from '@/store/useAppStore';
 import { useApi } from '@/hooks/useApi';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,39 +8,15 @@ import { Badge } from '@/components/ui/badge';
 import { Check, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-
+import { PLANS_CONFIG, type PlanConfig } from '@/lib/plans';
 import { getEnv } from '@/utils/env';
 
-const PLANS = [
-    {
-        id: 'price_free',
-        name: 'Free',
-        price: '$0',
-        description: 'Perfect for getting started',
-        features: ['Up to 5 Quotes and Invoices/month', 'Email Support', 'Custom Templates', 'Customer & Employee CRM'],
-        variant: 'outline',
-        disabled: false
-    },
-    {
-        id: getEnv('STRIPE_PRICE_BASIC') || 'price_1SwXG9BN4BBTzyIzU1G5sPnW', // Basic plan $5/mo
-        name: 'Basic',
-        price: '$5/mo',
-        description: 'For growing small businesses',
-        features: ['1 Month Free Trial', 'Unlimited Quotes', 'Unlimited Invoices', 'Priority Support'],
-        variant: 'default',
-        isPopular: true,
-        disabled: false
-    },
-    {
-        id: getEnv('STRIPE_PRICE_ADVANCED') || 'price_1T5cMbBN4BBTzyIzA7uPHGLc', // Advanced plan $15/mo
-        name: 'Advanced',
-        price: '$15/mo',
-        description: 'For established enterprises',
-        features: ['Everything in Basic', 'Recurring Invoices', 'Expense Management', 'Job Management (Coming Soon)', 'Asset Management (Coming Soon)', 'Advanced Analytics (Coming Soon)'],
-        variant: 'secondary',
-        disabled: false
-    }
-];
+// Map plan names to Stripe price IDs
+const STRIPE_PRICE_IDS: Record<string, string> = {
+    Free: 'price_free',
+    Basic: getEnv('STRIPE_PRICE_BASIC') || 'price_1SwXG9BN4BBTzyIzU1G5sPnW',
+    Advanced: getEnv('STRIPE_PRICE_ADVANCED') || 'price_1T5cMbBN4BBTzyIzA7uPHGLc',
+};
 
 interface UserProfile {
     email: string;
@@ -60,6 +36,15 @@ export default function PricingPage() {
     const [loadingProfile, setLoadingProfile] = useState(true);
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
+
+    // Use shared plan config with Stripe price IDs
+    const PLANS = useMemo(() =>
+        PLANS_CONFIG.map(plan => ({
+            ...plan,
+            id: STRIPE_PRICE_IDS[plan.name] || plan.id,
+        })),
+        []
+    );
 
     // Fetch user profile to determine current plan
     useEffect(() => {
