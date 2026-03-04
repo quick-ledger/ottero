@@ -83,13 +83,11 @@ const LandingPage = () => {
                         icon={<Briefcase className="h-10 w-10 text-orange-500" />}
                         title="Job Tracking"
                         description="Stay on top of every job. Track progress, assign tasks, and ensure nothing falls through the cracks."
-                        badge="Coming Soon"
                     />
                     <FeatureCard
                         icon={<Wrench className="h-10 w-10 text-red-500" />}
                         title="Asset Management"
                         description="Never lose a tool again. Track who has what equipment and manage your assets efficiently."
-                        badge="Coming Soon"
                     />
                     <FeatureCard
                         icon={<LayoutDashboard className="h-10 w-10 text-blue-500" />}
@@ -137,7 +135,7 @@ const LandingPage = () => {
                             name="Advanced"
                             price="$15/mo"
                             description="For established or larger businesses"
-                            features={['Everything in Basic', 'Recurring Invoices', 'Expense Management', 'Job Management (Coming Soon)', 'Asset Management (Coming Soon)', 'Advanced Analytics (Coming Soon)']}
+                            features={['Everything in Basic', 'Recurring Invoices', 'Expense Management', 'Job Management', 'Asset Management', 'Advanced Analytics (Coming Soon)']}
                             buttonText="Get Started"
                             variant="secondary"
                             onSubscribe={handleLogin}
