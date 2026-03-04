@@ -1,5 +1,7 @@
 # Ottero Monorepo
 
+> **IMPORTANT**: Never commit or push changes without user review. Always wait for explicit approval before running git commit, git push, or creating PRs.
+
 ## Architecture
 
 Ottero is a full-stack invoicing application in a monorepo structure:
