@@ -7,6 +7,8 @@ import io.quickledger.services.CompanyService;
 import io.quickledger.services.UserCompanyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import io.quickledger.dto.serviceitem.ServiceItemDto;
@@ -30,9 +32,17 @@ public class ServiceItemController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ServiceItemDto>> getAllCompanyServiceItems(@PathVariable Long companyId, @UserIdAuth User user) {
-        // Implement this method in ServiceItemService
-        return ResponseEntity.ok(serviceItemService.getAllCompanyServiceItems(companyId));
+    public ResponseEntity<Page<ServiceItemDto>> getAllCompanyServiceItems(@PathVariable Long companyId, Pageable pageable, @UserIdAuth User user) {
+        return ResponseEntity.ok(serviceItemService.getAllCompanyServiceItemsPaged(companyId, pageable));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<Page<ServiceItemDto>> searchServiceItems(
+            @PathVariable Long companyId,
+            @RequestParam String searchTerm,
+            Pageable pageable,
+            @UserIdAuth User user) {
+        return ResponseEntity.ok(serviceItemService.searchServiceItems(companyId, searchTerm, pageable));
     }
 
     @GetMapping("/{serviceItemId}")

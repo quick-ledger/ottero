@@ -5,6 +5,8 @@ import io.quickledger.security.UserIdAuth;
 import io.quickledger.services.product.ProductItemService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,8 +24,17 @@ public class ProductItemController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ProductItemDto>> getProducts(@PathVariable Long companyId) {
-        List<ProductItemDto> products = productItemService.findAllProducts(companyId);
+    public ResponseEntity<Page<ProductItemDto>> getProducts(@PathVariable Long companyId, Pageable pageable) {
+        Page<ProductItemDto> products = productItemService.findAllProductsPaged(companyId, pageable);
+        return ResponseEntity.ok(products);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<Page<ProductItemDto>> searchProducts(
+            @PathVariable Long companyId,
+            @RequestParam String searchTerm,
+            Pageable pageable) {
+        Page<ProductItemDto> products = productItemService.searchProducts(companyId, searchTerm, pageable);
         return ResponseEntity.ok(products);
     }
 

@@ -53,8 +53,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             String jwksUrl = "https://" + auth0Domain + "/.well-known/jwks.json";
             this.jwkProvider = new JwkProviderBuilder(URI.create(jwksUrl).toURL())
                     .cached(10, 24, java.util.concurrent.TimeUnit.HOURS) // Cache keys for 24 hours
+                    .rateLimited(10, 1, java.util.concurrent.TimeUnit.MINUTES) // Rate limit JWKS fetches
                     .build();
-            logger.info("JWK Provider initialized successfully");
+            logger.info("JWK Provider initialized successfully for URL: {}", jwksUrl);
         } catch (Exception e) {
             logger.error("Failed to initialize JWK Provider", e);
             throw new RuntimeException("Failed to initialize JWK Provider", e);
@@ -77,16 +78,20 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        logger.debug("Path: " + request.getRequestURI());
-        if (isExcludedPath(request.getRequestURI())) {
+        String path = request.getRequestURI();
+        logger.debug("JWT filter start - Path: {}", path);
+
+        if (isExcludedPath(path)) {
             filterChain.doFilter(request, response);
             return;
         }
 
         final String requestTokenHeader = request.getHeader("Authorization");
+        logger.debug("Authorization header present: {} (path: {})", requestTokenHeader != null, path);
 
         if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
             String jwtToken = requestTokenHeader.substring(7);
+            logger.debug("Processing Bearer token for path: {}", path);
             try {
                 // Extract kid from the token header (unverified step just to find the key)
                 String[] parts = jwtToken.split("\\.");
@@ -94,17 +99,25 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                     throw new IllegalArgumentException("Invalid JWT token format");
                 }
                 String headerJson = new String(Base64.getUrlDecoder().decode(parts[0]));
+                logger.debug("Parsing JWT header for path: {}", path);
                 String kid = new ObjectMapper().readTree(headerJson).get("kid").asText();
+
+                logger.debug("Fetching JWK for kid: {} (path: {})", kid, path);
+                long startTime = System.currentTimeMillis();
 
                 // Fetch Public Key using JwkProvider (cached)
                 Jwk jwk = jwkProvider.get(kid);
                 PublicKey publicKey = jwk.getPublicKey();
 
+                logger.debug("JWK fetched in {}ms for path: {}", System.currentTimeMillis() - startTime, path);
+
                 // Verify and Parse Token
+                logger.debug("Verifying JWT token for path: {}", path);
                 Jws<Claims> claims = Jwts.parser()
                         .verifyWith(publicKey)
                         .build()
                         .parseSignedClaims(jwtToken);
+                logger.debug("JWT verified successfully for path: {}", path);
 
                 // Extract User Details
                 String sub = claims.getPayload().getSubject();
@@ -154,9 +167,13 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid JWT token");
                 return;
             }
+        } else {
+            logger.debug("No Bearer token found, proceeding without auth for path: {}", path);
         }
 
+        logger.debug("Calling filterChain.doFilter for path: {}", path);
         filterChain.doFilter(request, response);
+        logger.debug("Completed request for path: {}", path);
     }
 
     private boolean isExcludedPath(String path) {

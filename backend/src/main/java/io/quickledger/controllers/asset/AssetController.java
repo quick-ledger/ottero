@@ -7,6 +7,8 @@ import io.quickledger.services.CompanyService;
 import io.quickledger.services.UserCompanyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import io.quickledger.dto.asset.AssetDto;
@@ -30,8 +32,8 @@ public class AssetController {
     }
 
     @GetMapping
-    public ResponseEntity<List<AssetDto>> getAllCompanyAssets(@PathVariable Long companyId, @UserIdAuth User user) {
-        return ResponseEntity.ok(assetService.getAllCompanyAssets(companyId, user));
+    public ResponseEntity<Page<AssetDto>> getAllCompanyAssets(@PathVariable Long companyId, Pageable pageable, @UserIdAuth User user) {
+        return ResponseEntity.ok(assetService.getAllCompanyAssets(companyId, pageable, user));
     }
 
     @GetMapping("/{assetId}")

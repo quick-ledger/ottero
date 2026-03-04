@@ -14,6 +14,8 @@ import io.quickledger.repositories.serviceitem.ServiceItemAttributeValueReposito
 import io.quickledger.services.asset.AssetService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -84,6 +86,16 @@ public class ServiceItemService {
                 .stream()
                 .map(serviceItemMapper::toDto)
                 .collect(Collectors.toList());
+    }
+
+    public Page<ServiceItemDto> getAllCompanyServiceItemsPaged(Long companyId, Pageable pageable) {
+        return serviceItemRepository.findByCompanyId(companyId, pageable)
+                .map(serviceItemMapper::toDto);
+    }
+
+    public Page<ServiceItemDto> searchServiceItems(Long companyId, String searchTerm, Pageable pageable) {
+        return serviceItemRepository.searchByCompanyId(companyId, searchTerm, pageable)
+                .map(serviceItemMapper::toDto);
     }
 
     public Optional<ServiceItemDto> getServiceItemByIdAndCompanyId(Long serviceItemId, Long companyId) {

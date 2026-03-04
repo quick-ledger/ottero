@@ -13,7 +13,7 @@ describe('Customer Workflows', () => {
 
         it('should create a new customer', () => {
             // Navigate to customers page
-            cy.contains('button', 'Settings').click();
+            cy.contains('button', 'Your Data').click();
             cy.wait(500);
             cy.contains('a', 'Customers').click();
             cy.url().should('include', '/customers');
@@ -36,7 +36,7 @@ describe('Customer Workflows', () => {
         });
 
         it('should create customer with all fields', () => {
-            cy.contains('button', 'Settings').click();
+            cy.contains('button', 'Your Data').click();
             cy.wait(500);
             cy.contains('a', 'Customers').click();
 
@@ -65,7 +65,7 @@ describe('Customer Workflows', () => {
 
     describe('Search Customer', () => {
         it('should search for existing customer', () => {
-            cy.contains('button', 'Settings').click();
+            cy.contains('button', 'Your Data').click();
             cy.wait(500);
             cy.contains('a', 'Customers').click();
 
@@ -79,7 +79,7 @@ describe('Customer Workflows', () => {
         });
 
         it('should show no results for non-existent customer', () => {
-            cy.contains('button', 'Settings').click();
+            cy.contains('button', 'Your Data').click();
             cy.wait(500);
             cy.contains('a', 'Customers').click();
 
@@ -93,7 +93,7 @@ describe('Customer Workflows', () => {
 
     describe('Edit Customer', () => {
         it('should edit customer phone number', () => {
-            cy.contains('button', 'Settings').click();
+            cy.contains('button', 'Your Data').click();
             cy.wait(500);
             cy.contains('a', 'Customers').click();
 
@@ -114,7 +114,7 @@ describe('Customer Workflows', () => {
         });
 
         it('should edit customer email', () => {
-            cy.contains('button', 'Settings').click();
+            cy.contains('button', 'Your Data').click();
             cy.wait(500);
             cy.contains('a', 'Customers').click();
 
@@ -134,7 +134,7 @@ describe('Customer Workflows', () => {
     describe('Delete Customer', () => {
         it('should delete a customer', () => {
             // First create a customer to delete
-            cy.contains('button', 'Settings').click();
+            cy.contains('button', 'Your Data').click();
             cy.wait(500);
             cy.contains('a', 'Customers').click();
 
@@ -151,7 +151,7 @@ describe('Customer Workflows', () => {
             cy.contains('Customer created').should('be.visible');
 
             // Now find and delete it
-            cy.contains('button', 'Settings').click();
+            cy.contains('button', 'Your Data').click();
             cy.wait(500);
             cy.contains('a', 'Customers').click();
 
@@ -184,7 +184,7 @@ describe('Customer Workflows', () => {
 
     describe('Customer List', () => {
         it('should display customer list', () => {
-            cy.contains('button', 'Settings').click();
+            cy.contains('button', 'Your Data').click();
             cy.wait(500);
             cy.contains('a', 'Customers').click();
 
