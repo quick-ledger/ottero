@@ -19,6 +19,7 @@ import {
 } from '@/components/ui/form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Trash2, Plus } from 'lucide-react';
+import { ItemSearch, type SelectedItem } from '@/components/line-items/ItemSearch';
 
 interface InvoiceLineItemsProps {
     form: UseFormReturn<InvoiceFormValues>;
@@ -57,8 +58,8 @@ export default function InvoiceLineItems({ form, disabled }: InvoiceLineItemsPro
                 </Button>
             </div>
 
-            <div className="border rounded-md">
-                <Table>
+            <div className="border rounded-md overflow-visible">
+                <Table className="overflow-visible">
                     <TableHeader>
                         <TableRow>
                             <TableHead className="w-[50px]">#</TableHead>
@@ -83,14 +84,35 @@ export default function InvoiceLineItems({ form, disabled }: InvoiceLineItemsPro
                                 <TableRow key={field.id}>
                                     <TableCell className="font-medium">{index + 1}</TableCell>
                                     <TableCell>
+                                        <ItemSearch
+                                            value={items[index]?.itemDescription || ''}
+                                            productItemId={items[index]?.productItemId}
+                                            serviceItemId={items[index]?.serviceItemId}
+                                            disabled={disabled}
+                                            onSelect={(item: SelectedItem) => {
+                                                const opts = { shouldValidate: true, shouldDirty: true };
+                                                form.setValue(`invoiceItems.${index}.itemDescription`, item.name, opts);
+                                                form.setValue(`invoiceItems.${index}.price`, item.price, opts);
+                                                if (item.type === 'product') {
+                                                    form.setValue(`invoiceItems.${index}.productItemId`, item.id || null, opts);
+                                                    form.setValue(`invoiceItems.${index}.serviceItemId`, null, opts);
+                                                } else if (item.type === 'service') {
+                                                    form.setValue(`invoiceItems.${index}.serviceItemId`, item.id || null, opts);
+                                                    form.setValue(`invoiceItems.${index}.productItemId`, null, opts);
+                                                }
+                                            }}
+                                            onCustomText={(text: string) => {
+                                                const opts = { shouldValidate: true, shouldDirty: true };
+                                                form.setValue(`invoiceItems.${index}.itemDescription`, text, opts);
+                                                form.setValue(`invoiceItems.${index}.productItemId`, null, opts);
+                                                form.setValue(`invoiceItems.${index}.serviceItemId`, null, opts);
+                                            }}
+                                        />
                                         <FormField
                                             control={form.control}
                                             name={`invoiceItems.${index}.itemDescription`}
-                                            render={({ field }) => (
+                                            render={() => (
                                                 <FormItem>
-                                                    <FormControl>
-                                                        <Input {...field} value={field.value || ''} placeholder="Description" disabled={disabled} />
-                                                    </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
                                             )}

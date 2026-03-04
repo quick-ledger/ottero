@@ -14,6 +14,8 @@ import io.quickledger.repositories.*;
 import io.quickledger.repositories.quote.QuoteItemRepository;
 import io.quickledger.repositories.quote.QuoteRepository;
 import io.quickledger.repositories.quote.QuoteAttachmentRepository;
+import io.quickledger.repositories.product.ProductItemRepository;
+import io.quickledger.repositories.serviceitem.ServiceItemRepository;
 import io.quickledger.entities.quote.QuoteAttachment;
 import io.quickledger.dto.quote.QuoteAttachmentDto;
 import jakarta.persistence.EntityNotFoundException;
@@ -56,6 +58,8 @@ public class QuoteService {
     private final UserCompanyService userCompanyService;
     private final PlanService planService;
     private final String appBaseUrl;
+    private final ProductItemRepository productItemRepository;
+    private final ServiceItemRepository serviceItemRepository;
 
     public QuoteService(QuoteRepository quoteRepository, QuoteItemRepository quoteItemRepository,
             QuoteMapper quoteMapper,
@@ -66,7 +70,8 @@ public class QuoteService {
             io.quickledger.mappers.quote.QuoteAttachmentMapper quoteAttachmentMapper,
             ObjectMapper objectMapper, EmailService emailService,
             UserCompanyService userCompanyService, PlanService planService,
-            @Value("${application.frontend.url}") String appBaseUrl) {
+            @Value("${application.frontend.url}") String appBaseUrl,
+            ProductItemRepository productItemRepository, ServiceItemRepository serviceItemRepository) {
         this.quoteRepository = quoteRepository;
         this.quoteItemRepository = quoteItemRepository;
         this.quoteMapper = quoteMapper;
@@ -85,6 +90,8 @@ public class QuoteService {
         this.userCompanyService = userCompanyService;
         this.planService = planService;
         this.appBaseUrl = appBaseUrl;
+        this.productItemRepository = productItemRepository;
+        this.serviceItemRepository = serviceItemRepository;
     }
 
     @Transactional
@@ -318,10 +325,25 @@ public class QuoteService {
             quote.setUser(user);
         }
 
-        // Quote Items Update
+        // Quote Items Update - resolve product/service references
         if (quote.getQuoteItems() != null) {
             for (QuoteItem quoteItem : quote.getQuoteItems()) {
                 quoteItem.setQuote(quote);
+                // Resolve product/service references from IDs
+                if (quoteItem.getProductItem() != null && quoteItem.getProductItem().getId() != null) {
+                    quoteItem.setProductItem(
+                        productItemRepository.findById(quoteItem.getProductItem().getId()).orElse(null)
+                    );
+                } else {
+                    quoteItem.setProductItem(null);
+                }
+                if (quoteItem.getServiceItem() != null && quoteItem.getServiceItem().getId() != null) {
+                    quoteItem.setServiceItem(
+                        serviceItemRepository.findById(quoteItem.getServiceItem().getId()).orElse(null)
+                    );
+                } else {
+                    quoteItem.setServiceItem(null);
+                }
             }
         }
 

@@ -19,6 +19,7 @@ import {
 } from '@/components/ui/form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Trash2, Plus } from 'lucide-react';
+import { ItemSearch, type SelectedItem } from '@/components/line-items/ItemSearch';
 
 interface QuoteLineItemsProps {
     form: UseFormReturn<QuoteFormValues>;
@@ -59,8 +60,8 @@ export default function QuoteLineItems({ form, disabled }: QuoteLineItemsProps) 
                 </Button>
             </div>
 
-            <div className="border rounded-md">
-                <Table>
+            <div className="border rounded-md overflow-visible">
+                <Table className="overflow-visible">
                     <TableHeader>
                         <TableRow>
                             <TableHead className="w-[50px]">#</TableHead>
@@ -86,14 +87,35 @@ export default function QuoteLineItems({ form, disabled }: QuoteLineItemsProps) 
                                 <TableRow key={field.id}>
                                     <TableCell className="font-medium">{index + 1}</TableCell>
                                     <TableCell>
+                                        <ItemSearch
+                                            value={items[index]?.itemDescription || ''}
+                                            productItemId={items[index]?.productItemId}
+                                            serviceItemId={items[index]?.serviceItemId}
+                                            disabled={disabled}
+                                            onSelect={(item: SelectedItem) => {
+                                                const opts = { shouldValidate: true, shouldDirty: true };
+                                                form.setValue(`quoteItems.${index}.itemDescription`, item.name, opts);
+                                                form.setValue(`quoteItems.${index}.price`, item.price, opts);
+                                                if (item.type === 'product') {
+                                                    form.setValue(`quoteItems.${index}.productItemId`, item.id || null, opts);
+                                                    form.setValue(`quoteItems.${index}.serviceItemId`, null, opts);
+                                                } else if (item.type === 'service') {
+                                                    form.setValue(`quoteItems.${index}.serviceItemId`, item.id || null, opts);
+                                                    form.setValue(`quoteItems.${index}.productItemId`, null, opts);
+                                                }
+                                            }}
+                                            onCustomText={(text: string) => {
+                                                const opts = { shouldValidate: true, shouldDirty: true };
+                                                form.setValue(`quoteItems.${index}.itemDescription`, text, opts);
+                                                form.setValue(`quoteItems.${index}.productItemId`, null, opts);
+                                                form.setValue(`quoteItems.${index}.serviceItemId`, null, opts);
+                                            }}
+                                        />
                                         <FormField
                                             control={form.control}
                                             name={`quoteItems.${index}.itemDescription`}
-                                            render={({ field }) => (
+                                            render={() => (
                                                 <FormItem>
-                                                    <FormControl>
-                                                        <Input {...field} placeholder="Description" disabled={disabled} />
-                                                    </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
                                             )}

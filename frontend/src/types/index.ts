@@ -121,7 +121,7 @@ export interface Invoice {
     invoiceNumber: string;
     quoteId?: string;
     quoteNumber?: string;
-    issueDate: string;
+    invoiceDate: string;
     dueDate: string;
     status: 'DRAFT' | 'SENT' | 'PAID' | 'CANCELLED';
     totalPrice: number;
