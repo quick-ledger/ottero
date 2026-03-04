@@ -293,6 +293,17 @@ export interface JobAttachment {
     size: number;
 }
 
+export interface JobTimeEntry {
+    id: string;
+    entryDate: string;
+    durationMinutes: number;
+    description?: string;
+    billable: boolean;
+    hourlyRate?: number;
+    employeeName?: string;
+    createdDate: string;
+}
+
 export interface LinkedQuote {
     id: string;
     quoteNumber: string;
@@ -325,6 +336,7 @@ export interface Job {
     modifiedDate?: string;
     notes?: JobNote[];
     attachments?: JobAttachment[];
+    timeEntries?: JobTimeEntry[];
     linkedQuotes?: LinkedQuote[];
     linkedInvoices?: LinkedInvoice[];
 }

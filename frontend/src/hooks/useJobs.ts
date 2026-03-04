@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useApi } from './useApi';
-import type { PaginatedResponse, Job, JobNote, JobAttachment } from '@/types';
+import type { PaginatedResponse, Job, JobNote, JobAttachment, JobTimeEntry } from '@/types';
 
 interface JobSearchParams {
     page: number;
@@ -244,6 +244,97 @@ export const useUnlinkInvoice = () => {
             companyId: string
         }) => {
             await api.delete(`/api/companies/${companyId}/jobs/${jobId}/invoices/${invoiceId}`);
+        },
+        onSuccess: (_, { jobId }) => {
+            queryClient.invalidateQueries({ queryKey: ['job', jobId] });
+        },
+    });
+};
+
+// Time Entries
+export const useAddJobTimeEntry = () => {
+    const api = useApi();
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async ({
+            jobId,
+            companyId,
+            entry
+        }: {
+            jobId: string;
+            companyId: string;
+            entry: {
+                entryDate: string;
+                durationMinutes: number;
+                description?: string;
+                billable?: boolean;
+                hourlyRate?: number;
+                employeeName?: string;
+            }
+        }) => {
+            const { data } = await api.post<JobTimeEntry>(
+                `/api/companies/${companyId}/jobs/${jobId}/time-entries`,
+                entry
+            );
+            return data;
+        },
+        onSuccess: (_, { jobId }) => {
+            queryClient.invalidateQueries({ queryKey: ['job', jobId] });
+        },
+    });
+};
+
+export const useUpdateJobTimeEntry = () => {
+    const api = useApi();
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async ({
+            jobId,
+            entryId,
+            companyId,
+            entry
+        }: {
+            jobId: string;
+            entryId: string;
+            companyId: string;
+            entry: {
+                entryDate?: string;
+                durationMinutes?: number;
+                description?: string;
+                billable?: boolean;
+                hourlyRate?: number;
+                employeeName?: string;
+            }
+        }) => {
+            const { data } = await api.put<JobTimeEntry>(
+                `/api/companies/${companyId}/jobs/${jobId}/time-entries/${entryId}`,
+                entry
+            );
+            return data;
+        },
+        onSuccess: (_, { jobId }) => {
+            queryClient.invalidateQueries({ queryKey: ['job', jobId] });
+        },
+    });
+};
+
+export const useDeleteJobTimeEntry = () => {
+    const api = useApi();
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async ({
+            jobId,
+            entryId,
+            companyId
+        }: {
+            jobId: string;
+            entryId: string;
+            companyId: string
+        }) => {
+            await api.delete(`/api/companies/${companyId}/jobs/${jobId}/time-entries/${entryId}`);
         },
         onSuccess: (_, { jobId }) => {
             queryClient.invalidateQueries({ queryKey: ['job', jobId] });

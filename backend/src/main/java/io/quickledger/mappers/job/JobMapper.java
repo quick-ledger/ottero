@@ -4,7 +4,7 @@ import io.quickledger.dto.job.JobDto;
 import io.quickledger.entities.job.Job;
 import org.mapstruct.*;
 
-@Mapper(componentModel = "spring", uses = {JobNoteMapper.class, JobAttachmentMapper.class})
+@Mapper(componentModel = "spring", uses = {JobNoteMapper.class, JobAttachmentMapper.class, JobTimeEntryMapper.class})
 public interface JobMapper {
 
     @Mapping(source = "company.id", target = "companyId")
@@ -20,6 +20,7 @@ public interface JobMapper {
     @Mapping(target = "client", ignore = true)
     @Mapping(target = "notes", ignore = true)
     @Mapping(target = "attachments", ignore = true)
+    @Mapping(target = "timeEntries", ignore = true)
     @Mapping(target = "linkedQuotes", ignore = true)
     @Mapping(target = "linkedInvoices", ignore = true)
     @Mapping(target = "createdDate", ignore = true)
@@ -31,6 +32,7 @@ public interface JobMapper {
     @Mapping(target = "client", ignore = true)
     @Mapping(target = "notes", ignore = true)
     @Mapping(target = "attachments", ignore = true)
+    @Mapping(target = "timeEntries", ignore = true)
     @Mapping(target = "linkedQuotes", ignore = true)
     @Mapping(target = "linkedInvoices", ignore = true)
     @Mapping(target = "createdDate", ignore = true)

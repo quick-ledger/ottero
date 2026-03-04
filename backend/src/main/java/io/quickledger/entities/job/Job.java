@@ -58,6 +58,10 @@ public class Job extends BaseEntity {
     @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<JobAttachment> attachments = new ArrayList<>();
 
+    @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OrderBy("entryDate DESC, createdDate DESC")
+    private List<JobTimeEntry> timeEntries = new ArrayList<>();
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "job_quotes",
@@ -184,5 +188,13 @@ public class Job extends BaseEntity {
 
     public void setLinkedInvoices(Set<Invoice> linkedInvoices) {
         this.linkedInvoices = linkedInvoices;
+    }
+
+    public List<JobTimeEntry> getTimeEntries() {
+        return timeEntries;
+    }
+
+    public void setTimeEntries(List<JobTimeEntry> timeEntries) {
+        this.timeEntries = timeEntries;
     }
 }
