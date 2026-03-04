@@ -16,6 +16,40 @@ Ottero is a full-stack invoicing application in a monorepo structure:
 - Authentication: Auth0 (OAuth2 with JWT tokens)
 - Production URL: https://ottero.com.au
 
+## Features
+
+### Core Invoicing
+- **Invoices**: Create, send, track payments (DRAFT → SENT → PAID/CANCELLED)
+- **Quotes**: Create estimates, convert to invoices
+- **Recurring Invoices**: Automatic invoice generation on schedule
+- **Payment Reminders**: Automated reminders for overdue invoices
+- **Stripe Payments**: Online payment integration
+
+### Inventory Management
+- **Products**: Inventory items with optional stock tracking
+- **Services**: Service items for billing
+- **Stock Tracking**: quantityOnHand, reorderPoint, automatic deduction on invoice send
+- **Stock Movements**: Full audit trail (SALE, PURCHASE, ADJUSTMENT)
+- **Purchase Orders**: Procurement workflow (DRAFT → SENT → PARTIALLY_RECEIVED → RECEIVED)
+- **Suppliers**: Vendor management for purchase orders
+
+### Job Management
+- **Jobs**: Track work with scheduling, status, and client assignment
+- **Job Notes**: Add notes to jobs
+- **Job Attachments**: File attachments with camera capture support
+- **Job Time Tracking**: Log time entries with duration, employee, billable flag, hourly rate
+
+### Other Features
+- **Customers/Clients**: Customer information management
+- **Expenses**: Track business expenses with attachments
+- **Assets**: Company-owned assets (separate from saleable products)
+- **Dashboard**: Overview of business metrics
+- **Multi-tenant**: Each user can have multiple companies
+
+### Mobile Features
+- **Camera Capture**: All attachment uploads support mobile camera capture via HTML5 `capture="environment"`
+- **Capacitor Support**: Native camera access on mobile apps (QuoteAttachments)
+
 ## Key Entities
 
 - **Invoice**: DRAFT, SENT, PAID, CANCELLED statuses
@@ -28,6 +62,8 @@ Ottero is a full-stack invoicing application in a monorepo structure:
 - **PurchaseOrder**: Procurement workflow (DRAFT, SENT, PARTIALLY_RECEIVED, RECEIVED)
 - **StockMovement**: Audit trail for inventory changes (SALE, PURCHASE, ADJUSTMENT)
 - **Asset**: Company-owned assets separate from saleable products
+- **Job**: Work tracking with notes, attachments, time entries
+- **JobTimeEntry**: Time tracking with duration, employee, billable status
 
 ## Frontend Patterns
 
