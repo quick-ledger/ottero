@@ -810,6 +810,7 @@ export default function JobEditPage() {
                                     accept="image/*,application/pdf"
                                     maxSizeMB={10}
                                     uploadLabel="Upload Photo/Document"
+                                    showCamera={true}
                                     onUploadSuccess={() => {
                                         refetch();
                                         toast.success('Attachment uploaded');

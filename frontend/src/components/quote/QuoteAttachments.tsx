@@ -168,11 +168,27 @@ export function QuoteAttachments({ companyId, quoteId }: QuoteAttachmentsProps) 
                         accept="image/*,application/pdf"
                         disabled={isNew}
                     />
-                    {Capacitor.getPlatform() !== 'web' && (
+                    {Capacitor.getPlatform() !== 'web' ? (
                         <Button variant="outline" size="sm" onClick={takePhoto} disabled={isUploading || isNew} title={isNew ? "Save quote first" : "Take photo"}>
                             <CameraIcon className="h-4 w-4 mr-2" />
                             Camera
                         </Button>
+                    ) : (
+                        <>
+                            <Button variant="outline" size="sm" onClick={() => document.getElementById('camera-upload')?.click()} disabled={isUploading || isNew} title={isNew ? "Save quote first" : "Take photo"}>
+                                <CameraIcon className="h-4 w-4 mr-2" />
+                                Camera
+                            </Button>
+                            <input
+                                id="camera-upload"
+                                type="file"
+                                className="hidden"
+                                onChange={handleFileUpload}
+                                accept="image/*"
+                                capture="environment"
+                                disabled={isNew}
+                            />
+                        </>
                     )}
                 </div>
             </CardHeader>

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { useApi } from '@/hooks/useApi';
 import { toast } from 'sonner';
-import { Upload, Trash, Image as ImageIcon } from 'lucide-react';
+import { Upload, Trash, Image as ImageIcon, Camera } from 'lucide-react';
 
 interface FileUploadProps {
     /**
@@ -69,6 +69,11 @@ interface FileUploadProps {
      * Custom class for the container
      */
     className?: string;
+
+    /**
+     * Show camera capture button on mobile (uses device camera)
+     */
+    showCamera?: boolean;
 }
 
 export function FileUpload({
@@ -85,6 +90,7 @@ export function FileUpload({
     size = 'sm',
     showDelete = false,
     className = '',
+    showCamera = false,
 }: FileUploadProps) {
     const [isUploading, setIsUploading] = useState(false);
     const [preview, setPreview] = useState<string | null>(null);
@@ -216,6 +222,7 @@ export function FileUpload({
     };
 
     const uploadId = `file-upload-${Math.random().toString(36).substr(2, 9)}`;
+    const cameraId = `camera-upload-${Math.random().toString(36).substr(2, 9)}`;
     const isImage = accept.includes('image');
     const hasFile = !!(preview && !imageError);
 
@@ -266,22 +273,36 @@ export function FileUpload({
             )}
 
             <div>
-                <Button
-                    type="button"
-                    variant={variant}
-                    size={size}
-                    onClick={() => document.getElementById(uploadId)?.click()}
-                    disabled={isUploading}
-                >
-                    {isUploading ? (
-                        <>Uploading...</>
-                    ) : (
-                        <>
-                            <Upload className="h-4 w-4 mr-2" />
-                            {hasFile && showPreview ? 'Change' : uploadLabel}
-                        </>
+                <div className="flex gap-2">
+                    <Button
+                        type="button"
+                        variant={variant}
+                        size={size}
+                        onClick={() => document.getElementById(uploadId)?.click()}
+                        disabled={isUploading}
+                    >
+                        {isUploading ? (
+                            <>Uploading...</>
+                        ) : (
+                            <>
+                                <Upload className="h-4 w-4 mr-2" />
+                                {hasFile && showPreview ? 'Change' : uploadLabel}
+                            </>
+                        )}
+                    </Button>
+                    {showCamera && (
+                        <Button
+                            type="button"
+                            variant={variant}
+                            size={size}
+                            onClick={() => document.getElementById(cameraId)?.click()}
+                            disabled={isUploading}
+                        >
+                            <Camera className="h-4 w-4 mr-2" />
+                            Take Photo
+                        </Button>
                     )}
-                </Button>
+                </div>
                 <input
                     id={uploadId}
                     type="file"
@@ -290,6 +311,17 @@ export function FileUpload({
                     accept={accept}
                     disabled={isUploading}
                 />
+                {showCamera && (
+                    <input
+                        id={cameraId}
+                        type="file"
+                        className="hidden"
+                        onChange={handleFileUpload}
+                        accept="image/*"
+                        capture="environment"
+                        disabled={isUploading}
+                    />
+                )}
                 <p className="text-xs text-muted-foreground mt-1">
                     {accept.replace('image/*', 'Images')} (max {maxSizeMB}MB)
                 </p>
