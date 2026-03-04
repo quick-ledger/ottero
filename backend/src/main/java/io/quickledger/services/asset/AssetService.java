@@ -3,6 +3,7 @@ package io.quickledger.services.asset;
 import io.quickledger.dto.asset.AssetAttributeValueDto;
 import io.quickledger.entities.asset.Asset;
 import io.quickledger.entities.asset.AssetAttributeValue;
+import io.quickledger.entities.asset.AssetGroup;
 import io.quickledger.entities.Company;
 import io.quickledger.entities.User;
 import io.quickledger.mappers.asset.AssetMapper;
@@ -10,6 +11,7 @@ import io.quickledger.mappers.asset.AssetAttributeDefinitionMapper;
 import io.quickledger.mappers.asset.AssetAttributeValueMapper;
 import io.quickledger.repositories.asset.AssetRepository;
 import io.quickledger.repositories.asset.AssetAttributeValueRepository;
+import io.quickledger.repositories.asset.AssetGroupRepository;
 import io.quickledger.services.PlanService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +31,7 @@ public class AssetService {
 
     private final AssetRepository assetRepository;
     private final AssetAttributeValueRepository assetAttributeValueRepository;
+    private final AssetGroupRepository assetGroupRepository;
     private final AssetMapper assetMapper;
     private final AssetAttributeValueMapper assetAttributeValueMapper;
     private final AssetAttributeDefinitionMapper assetAttributeDefinitionMapper;
@@ -37,6 +40,7 @@ public class AssetService {
     private final PlanService planService;
 
     public AssetService(AssetRepository assetRepository, AssetAttributeValueRepository assetAttributeValueRepository,
+                        AssetGroupRepository assetGroupRepository,
                         AssetMapper assetMapper, AssetAttributeValueMapper assetAttributeValueMapper,
                         AssetAttributeDefinitionMapper assetAttributeDefinitionMapper,
                         AssetDefinitionService assetAttributeDefinitionService,
@@ -44,6 +48,7 @@ public class AssetService {
                         PlanService planService) {
         this.assetRepository = assetRepository;
         this.assetAttributeValueRepository = assetAttributeValueRepository;
+        this.assetGroupRepository = assetGroupRepository;
         this.assetMapper = assetMapper;
         this.assetAttributeValueMapper = assetAttributeValueMapper;
         this.assetAttributeDefinitionMapper = assetAttributeDefinitionMapper;
@@ -92,8 +97,17 @@ public class AssetService {
         validateAccess(user);
         Asset asset = assetMapper.toEntity(assetDto);
         asset.setCompany(company);
-        Asset savedAsset = assetRepository.save(asset);
 
+        // Fetch existing AssetGroup from database if assetGroupId is provided
+        if (assetDto.getAssetGroupId() != null) {
+            AssetGroup assetGroup = assetGroupRepository.findById(assetDto.getAssetGroupId())
+                    .orElse(null);
+            asset.setAssetGroup(assetGroup);
+        } else {
+            asset.setAssetGroup(null);
+        }
+
+        Asset savedAsset = assetRepository.save(asset);
 
         if (assetDto.getValueDTOs() != null) {
             for (AssetAttributeValueDto valueDto : assetDto.getValueDTOs()) {

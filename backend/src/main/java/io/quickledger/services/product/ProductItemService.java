@@ -7,6 +7,8 @@ import io.quickledger.mappers.product.ProductItemMapper;
 import io.quickledger.repositories.product.ProductItemRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -38,8 +40,16 @@ public class ProductItemService {
         return products.stream().map(
             mapper::toDto
         ).collect(Collectors.toList());
+    }
 
+    public Page<ProductItemDto> findAllProductsPaged(Long companyId, Pageable pageable) {
+        Page<ProductItem> products = productItemRepository.findByCompanyId(companyId, pageable);
+        return products.map(mapper::toDto);
+    }
 
+    public Page<ProductItemDto> searchProducts(Long companyId, String searchTerm, Pageable pageable) {
+        Page<ProductItem> products = productItemRepository.searchByCompanyId(companyId, searchTerm, pageable);
+        return products.map(mapper::toDto);
     }
 
     public ProductItemDto save(ProductItemDto productItemDto, Long companyId) {

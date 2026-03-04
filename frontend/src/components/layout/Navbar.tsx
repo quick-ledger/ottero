@@ -72,6 +72,29 @@ const Navbar = () => {
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button variant="ghost" className="text-foreground/60 hover:text-foreground/80 px-2 justify-start md:justify-center w-full md:w-auto">
+                                Your Data <ChevronDown className="ml-1 h-4 w-4" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="start">
+                            {selectedCompanyId && (
+                                <DropdownMenuItem asChild>
+                                    <Link to={`/companies/${selectedCompanyId}`} className="cursor-pointer">Company Details</Link>
+                                </DropdownMenuItem>
+                            )}
+                            <DropdownMenuItem asChild>
+                                <Link to="/customers" className="cursor-pointer">Customers</Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem asChild>
+                                <Link to="/services" className="cursor-pointer">Services</Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem asChild>
+                                <Link to="/assets" className="cursor-pointer">Assets</Link>
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="text-foreground/60 hover:text-foreground/80 px-2 justify-start md:justify-center w-full md:w-auto">
                                 Settings <ChevronDown className="ml-1 h-4 w-4" />
                             </Button>
                         </DropdownMenuTrigger>
@@ -86,28 +109,8 @@ const Navbar = () => {
                             <DropdownMenuItem asChild>
                                 <Link to="/settings/referrals" className="cursor-pointer">Refer a Friend</Link>
                             </DropdownMenuItem>
-
                             <DropdownMenuSeparator />
-                            <DropdownMenuLabel>Your Data</DropdownMenuLabel>
-                            {selectedCompanyId && (
-                                <DropdownMenuItem asChild>
-                                    <Link to={`/companies/${selectedCompanyId}`} className="cursor-pointer">Company Details</Link>
-                                </DropdownMenuItem>
-                            )}
-                            <DropdownMenuItem asChild>
-                                <Link to="/customers" className="cursor-pointer">Customers</Link>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem asChild>
-                                <Link to="/products" className="cursor-pointer">Products</Link>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem asChild>
-                                <Link to="/services" className="cursor-pointer">Services</Link>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem asChild>
-                                <Link to="/assets" className="cursor-pointer">Assets</Link>
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuLabel>Quote and Invoice Settings</DropdownMenuLabel>
+                            <DropdownMenuLabel>Quote & Invoice</DropdownMenuLabel>
                             <DropdownMenuItem asChild>
                                 <Link to="/settings/template-config" className="cursor-pointer">PDF Template</Link>
                             </DropdownMenuItem>

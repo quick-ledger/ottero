@@ -1,6 +1,8 @@
 package io.quickledger.repositories.product;
 
 import io.quickledger.entities.product.ProductItem;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,6 +16,15 @@ import java.util.Optional;
 public interface ProductItemRepository extends JpaRepository<ProductItem, Long> {
 
     List<ProductItem> findAllByCompanyId(Long companyId);
+
+    Page<ProductItem> findByCompanyId(Long companyId, Pageable pageable);
+
+    @Query("SELECT p FROM ProductItem p WHERE p.company.id = :companyId " +
+           "AND (LOWER(p.name) LIKE LOWER(CONCAT('%', :searchTerm, '%')) " +
+           "OR LOWER(p.description) LIKE LOWER(CONCAT('%', :searchTerm, '%')))")
+    Page<ProductItem> searchByCompanyId(@Param("companyId") Long companyId,
+                                        @Param("searchTerm") String searchTerm,
+                                        Pageable pageable);
 
     Optional<ProductItem> findByIdAndCompanyId(Long id, Long companyId);
 

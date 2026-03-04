@@ -10,8 +10,8 @@ describe('Service Workflows', () => {
             const timestamp = Date.now();
             const serviceName = `Test Service ${timestamp}`;
 
-            // Navigate to services page via Settings menu
-            cy.contains('button', 'Settings').click();
+            // Navigate to services page via Your Data menu
+            cy.contains('button', 'Your Data').click();
             cy.wait(500);
             cy.contains('a', 'Services').click();
             cy.url().should('include', '/services');
