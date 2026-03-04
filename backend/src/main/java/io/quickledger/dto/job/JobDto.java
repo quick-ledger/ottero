@@ -30,6 +30,7 @@ public class JobDto {
 
     private List<JobNoteDto> notes;
     private List<JobAttachmentDto> attachments;
+    private List<JobTimeEntryDto> timeEntries;
     private List<LinkedQuoteDto> linkedQuotes;
     private List<LinkedInvoiceDto> linkedInvoices;
 
@@ -167,6 +168,14 @@ public class JobDto {
 
     public void setAttachments(List<JobAttachmentDto> attachments) {
         this.attachments = attachments;
+    }
+
+    public List<JobTimeEntryDto> getTimeEntries() {
+        return timeEntries;
+    }
+
+    public void setTimeEntries(List<JobTimeEntryDto> timeEntries) {
+        this.timeEntries = timeEntries;
     }
 
     public List<LinkedQuoteDto> getLinkedQuotes() {

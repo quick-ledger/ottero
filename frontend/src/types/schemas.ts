@@ -211,3 +211,14 @@ export const JobNoteSchema = z.object({
 });
 
 export type JobNoteFormValues = z.infer<typeof JobNoteSchema>;
+
+export const JobTimeEntrySchema = z.object({
+    entryDate: z.string().min(1, "Date is required"),
+    durationMinutes: z.coerce.number().min(1, "Duration must be at least 1 minute"),
+    description: z.string().optional(),
+    billable: z.boolean().default(true),
+    hourlyRate: z.coerce.number().optional(),
+    employeeName: z.string().optional(),
+});
+
+export type JobTimeEntryFormValues = z.infer<typeof JobTimeEntrySchema>;

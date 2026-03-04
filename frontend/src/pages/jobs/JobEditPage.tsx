@@ -2,11 +2,11 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth0 } from '@auth0/auth0-react';
 import { useAppStore } from '@/store/useAppStore';
-import { useJob, useDeleteJob, useAddJobNote, useDeleteJobNote, useDeleteJobAttachment, useLinkQuote, useUnlinkQuote, useLinkInvoice, useUnlinkInvoice } from '@/hooks/useJobs';
+import { useJob, useDeleteJob, useAddJobNote, useDeleteJobNote, useDeleteJobAttachment, useLinkQuote, useUnlinkQuote, useLinkInvoice, useUnlinkInvoice, useAddJobTimeEntry, useUpdateJobTimeEntry, useDeleteJobTimeEntry } from '@/hooks/useJobs';
 import { useJobForm } from '@/hooks/useJobForm';
 import { useApi } from '@/hooks/useApi';
 import { toast } from 'sonner';
-import { Loader2, ArrowLeft, Save, Trash, Paperclip, Download, X, Lock, Sparkles, Plus, FileText, Calendar, MapPin, User, Link as LinkIcon } from 'lucide-react';
+import { Loader2, ArrowLeft, Save, Trash, Paperclip, Download, X, Lock, Sparkles, Plus, FileText, Calendar, MapPin, User, Link as LinkIcon, Clock, Pencil, DollarSign } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -32,6 +32,8 @@ import { CustomerSearch } from '@/components/quote/CustomerSearch';
 import { QuoteSearch } from '@/components/job/QuoteSearch';
 import { InvoiceSearch } from '@/components/job/InvoiceSearch';
 import { Badge } from '@/components/ui/badge';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
 import {
     AlertDialog,
     AlertDialogAction,
@@ -65,6 +67,17 @@ export default function JobEditPage() {
     const [isAddingNote, setIsAddingNote] = useState(false);
     const [selectedCustomerName, setSelectedCustomerName] = useState<string | null>(null);
 
+    // Time entry state
+    const [timeEntryDate, setTimeEntryDate] = useState(new Date().toISOString().split('T')[0]);
+    const [timeEntryHours, setTimeEntryHours] = useState('');
+    const [timeEntryMinutes, setTimeEntryMinutes] = useState('');
+    const [timeEntryDescription, setTimeEntryDescription] = useState('');
+    const [timeEntryBillable, setTimeEntryBillable] = useState(true);
+    const [timeEntryHourlyRate, setTimeEntryHourlyRate] = useState('');
+    const [timeEntryEmployeeName, setTimeEntryEmployeeName] = useState('');
+    const [isAddingTimeEntry, setIsAddingTimeEntry] = useState(false);
+    const [editingTimeEntryId, setEditingTimeEntryId] = useState<string | null>(null);
+
     const { data: job, isLoading, refetch } = useJob(id || '', selectedCompanyId);
     const { form } = useJobForm();
     const deleteJob = useDeleteJob();
@@ -75,6 +88,9 @@ export default function JobEditPage() {
     const unlinkQuote = useUnlinkQuote();
     const linkInvoice = useLinkInvoice();
     const unlinkInvoice = useUnlinkInvoice();
+    const addTimeEntry = useAddJobTimeEntry();
+    const updateTimeEntry = useUpdateJobTimeEntry();
+    const deleteTimeEntry = useDeleteJobTimeEntry();
 
     const isAdvancedPlan = profile?.subscriptionPlan?.toLowerCase() === 'advanced';
 
@@ -190,6 +206,111 @@ export default function JobEditPage() {
         } catch {
             toast.error('Failed to delete attachment');
         }
+    };
+
+    const resetTimeEntryForm = () => {
+        setTimeEntryDate(new Date().toISOString().split('T')[0]);
+        setTimeEntryHours('');
+        setTimeEntryMinutes('');
+        setTimeEntryDescription('');
+        setTimeEntryBillable(true);
+        setTimeEntryHourlyRate('');
+        setTimeEntryEmployeeName('');
+        setEditingTimeEntryId(null);
+    };
+
+    const handleAddOrUpdateTimeEntry = async () => {
+        if (!selectedCompanyId || !id) return;
+
+        const hours = parseInt(timeEntryHours) || 0;
+        const minutes = parseInt(timeEntryMinutes) || 0;
+        const durationMinutes = hours * 60 + minutes;
+
+        if (durationMinutes < 1) {
+            toast.error('Duration must be at least 1 minute');
+            return;
+        }
+
+        setIsAddingTimeEntry(true);
+        try {
+            const entry = {
+                entryDate: timeEntryDate,
+                durationMinutes,
+                description: timeEntryDescription || undefined,
+                billable: timeEntryBillable,
+                hourlyRate: timeEntryHourlyRate ? parseFloat(timeEntryHourlyRate) : undefined,
+                employeeName: timeEntryEmployeeName || undefined,
+            };
+
+            if (editingTimeEntryId) {
+                await updateTimeEntry.mutateAsync({
+                    jobId: id,
+                    entryId: editingTimeEntryId,
+                    companyId: selectedCompanyId,
+                    entry,
+                });
+                toast.success('Time entry updated');
+            } else {
+                await addTimeEntry.mutateAsync({
+                    jobId: id,
+                    companyId: selectedCompanyId,
+                    entry,
+                });
+                toast.success('Time entry added');
+            }
+            resetTimeEntryForm();
+            refetch();
+        } catch {
+            toast.error('Failed to save time entry');
+        } finally {
+            setIsAddingTimeEntry(false);
+        }
+    };
+
+    const handleEditTimeEntry = (entry: { id: string; entryDate: string; durationMinutes: number; description?: string; billable: boolean; hourlyRate?: number; employeeName?: string }) => {
+        setEditingTimeEntryId(entry.id);
+        setTimeEntryDate(entry.entryDate);
+        const hours = Math.floor(entry.durationMinutes / 60);
+        const minutes = entry.durationMinutes % 60;
+        setTimeEntryHours(hours > 0 ? String(hours) : '');
+        setTimeEntryMinutes(minutes > 0 ? String(minutes) : '');
+        setTimeEntryDescription(entry.description || '');
+        setTimeEntryBillable(entry.billable);
+        setTimeEntryHourlyRate(entry.hourlyRate ? String(entry.hourlyRate) : '');
+        setTimeEntryEmployeeName(entry.employeeName || '');
+    };
+
+    const handleDeleteTimeEntry = async (entryId: string) => {
+        if (!selectedCompanyId || !id) return;
+
+        try {
+            await deleteTimeEntry.mutateAsync({ jobId: id, entryId, companyId: selectedCompanyId });
+            toast.success('Time entry deleted');
+            refetch();
+        } catch {
+            toast.error('Failed to delete time entry');
+        }
+    };
+
+    const formatDuration = (minutes: number) => {
+        const h = Math.floor(minutes / 60);
+        const m = minutes % 60;
+        if (h > 0 && m > 0) return `${h}h ${m}m`;
+        if (h > 0) return `${h}h`;
+        return `${m}m`;
+    };
+
+    const calculateTotalTime = () => {
+        if (!job?.timeEntries) return { totalMinutes: 0, totalBillable: 0 };
+        let totalMinutes = 0;
+        let totalBillable = 0;
+        for (const entry of job.timeEntries) {
+            totalMinutes += entry.durationMinutes;
+            if (entry.billable && entry.hourlyRate) {
+                totalBillable += (entry.durationMinutes / 60) * entry.hourlyRate;
+            }
+        }
+        return { totalMinutes, totalBillable };
     };
 
     if (!selectedCompanyId) {
@@ -476,6 +597,196 @@ export default function JobEditPage() {
                                                 >
                                                     <X className="h-4 w-4 text-destructive" />
                                                 </Button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </CardContent>
+                        </Card>
+                    )}
+
+                    {/* Time Entries - Only show for existing jobs */}
+                    {!isNew && (
+                        <Card>
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2">
+                                    <Clock className="h-5 w-5" />
+                                    Time Entries
+                                </CardTitle>
+                                <CardDescription>
+                                    Track time spent on this job
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                {/* Summary */}
+                                {job?.timeEntries && job.timeEntries.length > 0 && (
+                                    <div className="flex gap-4 p-3 bg-muted rounded-lg text-sm">
+                                        <div className="flex items-center gap-2">
+                                            <Clock className="h-4 w-4 text-muted-foreground" />
+                                            <span className="font-medium">Total: {formatDuration(calculateTotalTime().totalMinutes)}</span>
+                                        </div>
+                                        {calculateTotalTime().totalBillable > 0 && (
+                                            <div className="flex items-center gap-2">
+                                                <DollarSign className="h-4 w-4 text-muted-foreground" />
+                                                <span className="font-medium">Billable: ${calculateTotalTime().totalBillable.toFixed(2)}</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+
+                                {/* Add/Edit Time Entry Form */}
+                                <div className="space-y-3 p-4 border rounded-lg bg-muted/30">
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-sm font-medium">
+                                            {editingTimeEntryId ? 'Edit Time Entry' : 'Add Time Entry'}
+                                        </span>
+                                        {editingTimeEntryId && (
+                                            <Button
+                                                type="button"
+                                                variant="ghost"
+                                                size="sm"
+                                                onClick={resetTimeEntryForm}
+                                            >
+                                                Cancel
+                                            </Button>
+                                        )}
+                                    </div>
+                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                                        <div>
+                                            <Label className="text-xs">Date</Label>
+                                            <Input
+                                                type="date"
+                                                value={timeEntryDate}
+                                                onChange={(e) => setTimeEntryDate(e.target.value)}
+                                            />
+                                        </div>
+                                        <div>
+                                            <Label className="text-xs">Hours</Label>
+                                            <Input
+                                                type="number"
+                                                min="0"
+                                                placeholder="0"
+                                                value={timeEntryHours}
+                                                onChange={(e) => setTimeEntryHours(e.target.value)}
+                                            />
+                                        </div>
+                                        <div>
+                                            <Label className="text-xs">Minutes</Label>
+                                            <Input
+                                                type="number"
+                                                min="0"
+                                                max="59"
+                                                placeholder="0"
+                                                value={timeEntryMinutes}
+                                                onChange={(e) => setTimeEntryMinutes(e.target.value)}
+                                            />
+                                        </div>
+                                        <div>
+                                            <Label className="text-xs">Employee</Label>
+                                            <Input
+                                                placeholder="Who did the work?"
+                                                value={timeEntryEmployeeName}
+                                                onChange={(e) => setTimeEntryEmployeeName(e.target.value)}
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                        <div>
+                                            <Label className="text-xs">Description</Label>
+                                            <Input
+                                                placeholder="What was done?"
+                                                value={timeEntryDescription}
+                                                onChange={(e) => setTimeEntryDescription(e.target.value)}
+                                            />
+                                        </div>
+                                        <div>
+                                            <Label className="text-xs">Hourly Rate (optional)</Label>
+                                            <Input
+                                                type="number"
+                                                min="0"
+                                                step="0.01"
+                                                placeholder="$0.00"
+                                                value={timeEntryHourlyRate}
+                                                onChange={(e) => setTimeEntryHourlyRate(e.target.value)}
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-2">
+                                            <Switch
+                                                id="billable"
+                                                checked={timeEntryBillable}
+                                                onCheckedChange={setTimeEntryBillable}
+                                            />
+                                            <Label htmlFor="billable" className="text-sm cursor-pointer">
+                                                Billable
+                                            </Label>
+                                        </div>
+                                        <Button
+                                            type="button"
+                                            onClick={handleAddOrUpdateTimeEntry}
+                                            disabled={isAddingTimeEntry}
+                                        >
+                                            {isAddingTimeEntry ? (
+                                                <Loader2 className="h-4 w-4 animate-spin mr-1" />
+                                            ) : editingTimeEntryId ? (
+                                                <Save className="h-4 w-4 mr-1" />
+                                            ) : (
+                                                <Plus className="h-4 w-4 mr-1" />
+                                            )}
+                                            {editingTimeEntryId ? 'Update' : 'Add'}
+                                        </Button>
+                                    </div>
+                                </div>
+
+                                {/* Time Entries List */}
+                                {job?.timeEntries && job.timeEntries.length > 0 && (
+                                    <div className="space-y-2 mt-4 border-t pt-4">
+                                        {job.timeEntries.map((entry) => (
+                                            <div
+                                                key={entry.id}
+                                                className="flex items-start justify-between p-3 border rounded-lg bg-muted/50"
+                                            >
+                                                <div className="flex-1 space-y-1">
+                                                    <div className="flex items-center gap-2 flex-wrap">
+                                                        <span className="font-medium">{formatDuration(entry.durationMinutes)}</span>
+                                                        <span className="text-xs text-muted-foreground">
+                                                            {new Date(entry.entryDate).toLocaleDateString()}
+                                                        </span>
+                                                        {entry.billable && (
+                                                            <Badge variant="secondary" className="text-xs">Billable</Badge>
+                                                        )}
+                                                        {entry.hourlyRate && (
+                                                            <span className="text-xs text-muted-foreground">
+                                                                ${entry.hourlyRate}/hr
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                    {entry.employeeName && (
+                                                        <p className="text-xs text-muted-foreground flex items-center gap-1">
+                                                            <User className="h-3 w-3" /> {entry.employeeName}
+                                                        </p>
+                                                    )}
+                                                    {entry.description && (
+                                                        <p className="text-sm">{entry.description}</p>
+                                                    )}
+                                                </div>
+                                                <div className="flex gap-1">
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        onClick={() => handleEditTimeEntry(entry)}
+                                                    >
+                                                        <Pencil className="h-4 w-4" />
+                                                    </Button>
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        onClick={() => handleDeleteTimeEntry(entry.id)}
+                                                    >
+                                                        <X className="h-4 w-4 text-destructive" />
+                                                    </Button>
+                                                </div>
                                             </div>
                                         ))}
                                     </div>

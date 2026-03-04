@@ -34,6 +34,7 @@ public class JobService {
     private final JobRepository jobRepository;
     private final JobNoteRepository noteRepository;
     private final JobAttachmentRepository attachmentRepository;
+    private final JobTimeEntryRepository timeEntryRepository;
     private final QuoteRepository quoteRepository;
     private final InvoiceRepository invoiceRepository;
     private final ClientRepository clientRepository;
@@ -41,12 +42,14 @@ public class JobService {
     private final JobMapper jobMapper;
     private final JobNoteMapper noteMapper;
     private final JobAttachmentMapper attachmentMapper;
+    private final JobTimeEntryMapper timeEntryMapper;
     private final PlanService planService;
 
     public JobService(
             JobRepository jobRepository,
             JobNoteRepository noteRepository,
             JobAttachmentRepository attachmentRepository,
+            JobTimeEntryRepository timeEntryRepository,
             QuoteRepository quoteRepository,
             InvoiceRepository invoiceRepository,
             ClientRepository clientRepository,
@@ -54,10 +57,12 @@ public class JobService {
             JobMapper jobMapper,
             JobNoteMapper noteMapper,
             JobAttachmentMapper attachmentMapper,
+            JobTimeEntryMapper timeEntryMapper,
             PlanService planService) {
         this.jobRepository = jobRepository;
         this.noteRepository = noteRepository;
         this.attachmentRepository = attachmentRepository;
+        this.timeEntryRepository = timeEntryRepository;
         this.quoteRepository = quoteRepository;
         this.invoiceRepository = invoiceRepository;
         this.clientRepository = clientRepository;
@@ -65,6 +70,7 @@ public class JobService {
         this.jobMapper = jobMapper;
         this.noteMapper = noteMapper;
         this.attachmentMapper = attachmentMapper;
+        this.timeEntryMapper = timeEntryMapper;
         this.planService = planService;
     }
 
@@ -265,6 +271,60 @@ public class JobService {
                 .orElseThrow(() -> new EntityNotFoundException("Job not found"));
         job.getLinkedInvoices().removeIf(i -> i.getId().equals(invoiceId));
         jobRepository.save(job);
+    }
+
+    // Time Entries
+    @Transactional
+    public JobTimeEntryDto addTimeEntry(Long jobId, Long companyId, JobTimeEntryDto dto, User user) {
+        validateJobAccess(user);
+        Job job = jobRepository.findByIdAndCompanyId(jobId, companyId)
+                .orElseThrow(() -> new EntityNotFoundException("Job not found"));
+
+        JobTimeEntry entry = new JobTimeEntry();
+        entry.setJob(job);
+        entry.setCompany(job.getCompany());
+        entry.setEntryDate(dto.getEntryDate() != null ? dto.getEntryDate() : LocalDate.now());
+        entry.setDurationMinutes(dto.getDurationMinutes());
+        entry.setDescription(dto.getDescription());
+        entry.setBillable(dto.getBillable() != null ? dto.getBillable() : true);
+        entry.setHourlyRate(dto.getHourlyRate());
+        entry.setEmployeeName(dto.getEmployeeName());
+
+        entry = timeEntryRepository.save(entry);
+        return timeEntryMapper.toDto(entry);
+    }
+
+    @Transactional
+    public JobTimeEntryDto updateTimeEntry(Long entryId, Long companyId, JobTimeEntryDto dto, User user) {
+        validateJobAccess(user);
+        JobTimeEntry entry = timeEntryRepository.findByIdAndCompanyId(entryId, companyId)
+                .orElseThrow(() -> new EntityNotFoundException("Time entry not found"));
+
+        if (dto.getEntryDate() != null) {
+            entry.setEntryDate(dto.getEntryDate());
+        }
+        if (dto.getDurationMinutes() != null) {
+            entry.setDurationMinutes(dto.getDurationMinutes());
+        }
+        if (dto.getDescription() != null) {
+            entry.setDescription(dto.getDescription());
+        }
+        if (dto.getBillable() != null) {
+            entry.setBillable(dto.getBillable());
+        }
+        entry.setHourlyRate(dto.getHourlyRate());
+        entry.setEmployeeName(dto.getEmployeeName());
+
+        entry = timeEntryRepository.save(entry);
+        return timeEntryMapper.toDto(entry);
+    }
+
+    @Transactional
+    public void deleteTimeEntry(Long entryId, Long companyId, User user) {
+        validateJobAccess(user);
+        JobTimeEntry entry = timeEntryRepository.findByIdAndCompanyId(entryId, companyId)
+                .orElseThrow(() -> new EntityNotFoundException("Time entry not found"));
+        timeEntryRepository.delete(entry);
     }
 
     // Helper to build full DTO with linked entities

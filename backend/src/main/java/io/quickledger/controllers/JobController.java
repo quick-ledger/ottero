@@ -1,6 +1,9 @@
 package io.quickledger.controllers;
 
-import io.quickledger.dto.job.*;
+import io.quickledger.dto.job.JobAttachmentDto;
+import io.quickledger.dto.job.JobDto;
+import io.quickledger.dto.job.JobNoteDto;
+import io.quickledger.dto.job.JobTimeEntryDto;
 import io.quickledger.entities.User;
 import io.quickledger.entities.job.JobAttachment;
 import io.quickledger.security.UserIdAuth;
@@ -192,6 +195,38 @@ public class JobController {
             @PathVariable Long invoiceId,
             @UserIdAuth final User user) {
         jobService.unlinkInvoice(jobId, invoiceId, companyId, user);
+        return ResponseEntity.noContent().build();
+    }
+
+    // Time Entries
+    @PostMapping("/{jobId}/time-entries")
+    public ResponseEntity<JobTimeEntryDto> addTimeEntry(
+            @PathVariable Long companyId,
+            @PathVariable Long jobId,
+            @RequestBody JobTimeEntryDto dto,
+            @UserIdAuth final User user) {
+        JobTimeEntryDto created = jobService.addTimeEntry(jobId, companyId, dto, user);
+        return ResponseEntity.ok(created);
+    }
+
+    @PutMapping("/{jobId}/time-entries/{entryId}")
+    public ResponseEntity<JobTimeEntryDto> updateTimeEntry(
+            @PathVariable Long companyId,
+            @PathVariable Long jobId,
+            @PathVariable Long entryId,
+            @RequestBody JobTimeEntryDto dto,
+            @UserIdAuth final User user) {
+        JobTimeEntryDto updated = jobService.updateTimeEntry(entryId, companyId, dto, user);
+        return ResponseEntity.ok(updated);
+    }
+
+    @DeleteMapping("/{jobId}/time-entries/{entryId}")
+    public ResponseEntity<Void> deleteTimeEntry(
+            @PathVariable Long companyId,
+            @PathVariable Long jobId,
+            @PathVariable Long entryId,
+            @UserIdAuth final User user) {
+        jobService.deleteTimeEntry(entryId, companyId, user);
         return ResponseEntity.noContent().build();
     }
 }
