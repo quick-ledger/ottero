@@ -61,7 +61,8 @@ const PLAN_FEATURES: Record<Plan, Set<Feature>> = {
         'RECURRING_INVOICES',
         'EXPENSE_MANAGEMENT',
         'JOB_MANAGEMENT',
-        // Coming Soon: ASSET_MANAGEMENT, ADVANCED_ANALYTICS
+        'ASSET_MANAGEMENT',
+        // Coming Soon: ADVANCED_ANALYTICS
     ]),
 };
 
@@ -103,7 +104,6 @@ export const FEATURE_LABELS: Record<Feature, string> = {
 
 // Features marked as "Coming Soon"
 export const COMING_SOON_FEATURES: Set<Feature> = new Set([
-    'ASSET_MANAGEMENT',
     'ADVANCED_ANALYTICS',
 ]);
 

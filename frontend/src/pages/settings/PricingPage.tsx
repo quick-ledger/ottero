@@ -36,7 +36,7 @@ const PLANS = [
         name: 'Advanced',
         price: '$15/mo',
         description: 'For established enterprises',
-        features: ['Everything in Basic', 'Recurring Invoices', 'Expense Management', 'Job Management (Coming Soon)', 'Asset Management (Coming Soon)', 'Advanced Analytics (Coming Soon)'],
+        features: ['Everything in Basic', 'Recurring Invoices', 'Expense Management', 'Job Management', 'Asset Management', 'Advanced Analytics (Coming Soon)'],
         variant: 'secondary',
         disabled: false
     }
