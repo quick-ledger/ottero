@@ -32,7 +32,7 @@ const StockMovementsPage = () => {
         <div className="container mx-auto py-8 px-4">
             <h1 className="text-2xl font-bold mb-6">Stock Movements</h1>
 
-            <div className="rounded-md border">
+            <div className="rounded-md border overflow-x-auto">
                 <Table>
                     <TableHeader>
                         <TableRow>
@@ -88,7 +88,7 @@ const StockMovementsPage = () => {
             </div>
 
             {data && data.totalPages > 1 && (
-                <div className="flex items-center justify-between mt-4">
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-2 mt-4">
                     <div className="text-sm text-muted-foreground">
                         Page {page + 1} of {data.totalPages}
                     </div>

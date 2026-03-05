@@ -62,9 +62,9 @@ const PurchaseOrderListPage = () => {
 
     return (
         <div className="container mx-auto py-8 px-4">
-            <div className="flex justify-between items-center mb-6">
+            <div className="flex flex-col sm:flex-row justify-between items-start gap-4 mb-6">
                 <h1 className="text-2xl font-bold">Purchase Orders</h1>
-                <Button asChild>
+                <Button asChild className="shrink-0">
                     <Link to="/purchase-orders/new">
                         <Plus className="h-4 w-4 mr-2" />
                         New Purchase Order
@@ -72,7 +72,7 @@ const PurchaseOrderListPage = () => {
                 </Button>
             </div>
 
-            <div className="rounded-md border">
+            <div className="rounded-md border overflow-x-auto">
                 <Table>
                     <TableHeader>
                         <TableRow>
@@ -136,7 +136,7 @@ const PurchaseOrderListPage = () => {
             </div>
 
             {data && data.totalPages > 1 && (
-                <div className="flex items-center justify-between mt-4">
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-2 mt-4">
                     <div className="text-sm text-muted-foreground">
                         Page {page + 1} of {data.totalPages}
                     </div>

@@ -33,21 +33,21 @@ export default function ProductListPage() {
     if (error) return <div className="p-8 text-destructive">Error loading products.</div>;
 
     return (
-        <div className="container mx-auto py-10">
-            <div className="flex justify-between items-center mb-6">
+        <div className="container mx-auto py-10 px-4">
+            <div className="flex flex-col sm:flex-row justify-between items-start gap-4 mb-6">
                 <div>
                     <h1 className="text-3xl font-bold tracking-tight">Products</h1>
                     <p className="text-muted-foreground mt-1">
                         Items you sell to customers. Products appear on invoices and quotes, and can have inventory tracking enabled.
                     </p>
                 </div>
-                <Button onClick={() => navigate('/products/new')}>
+                <Button onClick={() => navigate('/products/new')} className="shrink-0">
                     <Plus className="mr-2 h-4 w-4" />
                     New Product
                 </Button>
             </div>
 
-            <div className="flex items-center py-4 relative max-w-sm">
+            <div className="flex items-center py-4 relative w-full sm:max-w-sm">
                 <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
                     placeholder="Search products..."
@@ -57,7 +57,7 @@ export default function ProductListPage() {
                 />
             </div>
 
-            <div className="border rounded-md">
+            <div className="border rounded-md overflow-x-auto">
                 <Table>
                     <TableHeader>
                         <TableRow>
