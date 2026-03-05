@@ -21,6 +21,15 @@ on:
         description: 'Image tag to deploy (defaults to latest)'
         required: false
         default: 'latest'
+      component:
+        description: 'Component to deploy'
+        required: false
+        default: 'both'
+        type: choice
+        options:
+          - both
+          - frontend
+          - backend
 
 env:
   REGISTRY: ghcr.io
@@ -32,38 +41,36 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'workflow_run'
     outputs:
-      should_deploy: ${{ steps.check.outputs.should_deploy }}
+      deploy_frontend: ${{ steps.check.outputs.deploy_frontend }}
+      deploy_backend: ${{ steps.check.outputs.deploy_backend }}
     steps:
-      - name: Check if both CI workflows passed
+      - name: Determine what to deploy
         id: check
-        env:
-          GH_TOKEN: ${{ github.token }}
         run: |
           # Skip if the triggering workflow failed
           if [ "${{ github.event.workflow_run.conclusion }}" != "success" ]; then
             echo "Triggering workflow failed, skipping deployment"
-            echo "should_deploy=false" >> $GITHUB_OUTPUT
+            echo "deploy_frontend=false" >> $GITHUB_OUTPUT
+            echo "deploy_backend=false" >> $GITHUB_OUTPUT
             exit 0
           fi
 
-          # Check the status of both CI workflows for this commit
-          SHA="${{ github.event.workflow_run.head_sha }}"
+          # Deploy based on which workflow triggered this
+          WORKFLOW_NAME="${{ github.event.workflow_run.name }}"
+          echo "Triggered by: $WORKFLOW_NAME"
 
-          FRONTEND_STATUS=$(gh api repos/${{ github.repository }}/actions/workflows/frontend-ci.yml/runs \
-            --jq ".workflow_runs[] | select(.head_sha == \"$SHA\" and .status == \"completed\") | .conclusion" | head -1)
-
-          BACKEND_STATUS=$(gh api repos/${{ github.repository }}/actions/workflows/backend-ci.yml/runs \
-            --jq ".workflow_runs[] | select(.head_sha == \"$SHA\" and .status == \"completed\") | .conclusion" | head -1)
-
-          echo "Frontend CI status: $FRONTEND_STATUS"
-          echo "Backend CI status: $BACKEND_STATUS"
-
-          if [ "$FRONTEND_STATUS" = "success" ] && [ "$BACKEND_STATUS" = "success" ]; then
-            echo "Both CI workflows passed, proceeding with deployment"
-            echo "should_deploy=true" >> $GITHUB_OUTPUT
+          if [ "$WORKFLOW_NAME" = "Frontend CI/CD" ]; then
+            echo "Frontend CI passed, deploying frontend"
+            echo "deploy_frontend=true" >> $GITHUB_OUTPUT
+            echo "deploy_backend=false" >> $GITHUB_OUTPUT
+          elif [ "$WORKFLOW_NAME" = "Backend CI/CD" ]; then
+            echo "Backend CI passed, deploying backend"
+            echo "deploy_frontend=false" >> $GITHUB_OUTPUT
+            echo "deploy_backend=true" >> $GITHUB_OUTPUT
           else
-            echo "Waiting for both CI workflows to complete successfully"
-            echo "should_deploy=false" >> $GITHUB_OUTPUT
+            echo "Unknown workflow, skipping"
+            echo "deploy_frontend=false" >> $GITHUB_OUTPUT
+            echo "deploy_backend=false" >> $GITHUB_OUTPUT
           fi
 
   deploy:
@@ -72,12 +79,32 @@ jobs:
     if: |
       always() &&
       (github.event_name == 'workflow_dispatch' ||
-       (github.event_name == 'workflow_run' && needs.check-ci-status.outputs.should_deploy == 'true'))
+       (github.event_name == 'workflow_run' && (needs.check-ci-status.outputs.deploy_frontend == 'true' || needs.check-ci-status.outputs.deploy_backend == 'true')))
     environment: prod
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Determine components to deploy
+        id: components
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            COMPONENT="${{ github.event.inputs.component }}"
+            if [ "$COMPONENT" = "both" ] || [ -z "$COMPONENT" ]; then
+              echo "deploy_frontend=true" >> $GITHUB_OUTPUT
+              echo "deploy_backend=true" >> $GITHUB_OUTPUT
+            elif [ "$COMPONENT" = "frontend" ]; then
+              echo "deploy_frontend=true" >> $GITHUB_OUTPUT
+              echo "deploy_backend=false" >> $GITHUB_OUTPUT
+            elif [ "$COMPONENT" = "backend" ]; then
+              echo "deploy_frontend=false" >> $GITHUB_OUTPUT
+              echo "deploy_backend=true" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "deploy_frontend=${{ needs.check-ci-status.outputs.deploy_frontend }}" >> $GITHUB_OUTPUT
+            echo "deploy_backend=${{ needs.check-ci-status.outputs.deploy_backend }}" >> $GITHUB_OUTPUT
+          fi
 
       - name: Set up kubectl
         uses: azure/setup-kubectl@v3
@@ -90,21 +117,38 @@ jobs:
           echo "${{ secrets.KUBECONFIG }}" | base64 -d > ~/.kube/config
           kubectl config use-context ottero-prod
 
-      - name: Update image tags in manifests
+      - name: Update frontend image tag
+        if: steps.components.outputs.deploy_frontend == 'true'
         run: |
           TAG=${{ github.event.inputs.image_tag || 'latest' }}
           sed -i "s|image: ${{ env.REGISTRY }}/${{ env.FRONTEND_IMAGE }}:.*|image: ${{ env.REGISTRY }}/${{ env.FRONTEND_IMAGE }}:${TAG}|g" infra/k8s/06-frontend.yaml
+
+      - name: Update backend image tag
+        if: steps.components.outputs.deploy_backend == 'true'
+        run: |
+          TAG=${{ github.event.inputs.image_tag || 'latest' }}
           sed -i "s|image: ${{ env.REGISTRY }}/${{ env.BACKEND_IMAGE }}:.*|image: ${{ env.REGISTRY }}/${{ env.BACKEND_IMAGE }}:${TAG}|g" infra/k8s/05-backend.yaml
 
-      - name: Deploy using deploy script
+      - name: Deploy frontend
+        if: steps.components.outputs.deploy_frontend == 'true'
         run: |
-          cd infra/k8s
-          chmod +x deploy.sh 00-cert_manager.sh update.sh
-          ./deploy.sh
+          echo "Deploying frontend..."
+          kubectl apply -f infra/k8s/06-frontend.yaml
 
-      - name: Wait for rollout
+      - name: Deploy backend
+        if: steps.components.outputs.deploy_backend == 'true'
+        run: |
+          echo "Deploying backend..."
+          kubectl apply -f infra/k8s/05-backend.yaml
+
+      - name: Wait for frontend rollout
+        if: steps.components.outputs.deploy_frontend == 'true'
         run: |
           kubectl rollout status deployment/ottero-frontend -n ottero --timeout=300s
+
+      - name: Wait for backend rollout
+        if: steps.components.outputs.deploy_backend == 'true'
+        run: |
           kubectl rollout status deployment/ottero-backend -n ottero --timeout=300s
 
       - name: Verify deployment
