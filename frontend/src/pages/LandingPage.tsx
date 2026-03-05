@@ -5,6 +5,7 @@ import { ArrowRight, Briefcase, DollarSign, FileText, LayoutDashboard, Users, Wr
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { PLANS_CONFIG } from '@/lib/plans';
+import InstallPWA from '@/components/InstallPWA';
 
 const LandingPage = () => {
     const { loginWithRedirect, isAuthenticated, isLoading } = useAuth0();
@@ -137,6 +138,7 @@ const LandingPage = () => {
                     </div>
                 </div>
             </footer >
+            <InstallPWA />
         </div >
     );
 };

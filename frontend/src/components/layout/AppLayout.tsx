@@ -2,6 +2,7 @@ import { Outlet, Navigate, useLocation } from 'react-router-dom';
 import { withAuthenticationRequired } from '@auth0/auth0-react';
 import { useEffect } from 'react';
 import Navbar from './Navbar';
+import InstallPWA from '@/components/InstallPWA';
 import { useSelectedCompanyId, useHasSeenOnboarding, useAppActions } from '@/store/useAppStore';
 import { useCompanies } from '@/hooks/useCompanies';
 
@@ -12,6 +13,7 @@ const AppLayout = () => {
             <main className="flex-1">
                 <Outlet />
             </main>
+            <InstallPWA />
         </div>
     );
 };
