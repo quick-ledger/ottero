@@ -60,14 +60,14 @@ const AssetListPage = () => {
 
     return (
         <div className="container mx-auto py-8 px-4">
-            <div className="flex justify-between items-start mb-6">
+            <div className="flex flex-col sm:flex-row justify-between items-start gap-4 mb-6">
                 <div>
                     <h1 className="text-2xl font-bold">Assets</h1>
                     <p className="text-muted-foreground mt-1">
                         Company-owned equipment and property (vehicles, computers, machinery). Assets are not for sale and don't appear on invoices.
                     </p>
                 </div>
-                <Button asChild>
+                <Button asChild className="shrink-0">
                     <Link to="/assets/new">
                         <Plus className="h-4 w-4 mr-2" />
                         Add Asset
@@ -75,7 +75,7 @@ const AssetListPage = () => {
                 </Button>
             </div>
 
-            <div className="rounded-md border">
+            <div className="rounded-md border overflow-x-auto">
                 <Table>
                     <TableHeader>
                         <TableRow>
@@ -139,7 +139,7 @@ const AssetListPage = () => {
             </div>
 
             {data && data.totalPages > 1 && (
-                <div className="flex items-center justify-between mt-4">
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-2 mt-4">
                     <div className="text-sm text-muted-foreground">
                         Page {page + 1} of {data.totalPages}
                     </div>

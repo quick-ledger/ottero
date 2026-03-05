@@ -82,8 +82,8 @@ export default function JobListPage() {
     });
 
     return (
-        <div className="container mx-auto py-10">
-            <div className="flex justify-between items-center mb-6">
+        <div className="container mx-auto py-10 px-4">
+            <div className="flex flex-col sm:flex-row justify-between items-start gap-4 mb-6">
                 <div>
                     <h1 className="text-3xl font-bold tracking-tight">Jobs</h1>
                     <p className="text-muted-foreground mt-1">
@@ -91,7 +91,7 @@ export default function JobListPage() {
                     </p>
                 </div>
                 {isAdvancedPlan && (
-                    <Button onClick={() => navigate('/jobs/new')}>
+                    <Button onClick={() => navigate('/jobs/new')} className="shrink-0">
                         <Plus className="mr-2 h-4 w-4" />
                         New Job
                     </Button>
@@ -119,7 +119,7 @@ export default function JobListPage() {
                 </Card>
             )}
 
-            <div className="flex items-center py-4 relative max-w-sm">
+            <div className="flex items-center py-4 relative w-full sm:max-w-sm">
                 <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
                     placeholder="Search by title, job number, or location..."
@@ -129,7 +129,7 @@ export default function JobListPage() {
                 />
             </div>
 
-            <div className="border rounded-md">
+            <div className="border rounded-md overflow-x-auto">
                 <Table>
                     <TableHeader>
                         <TableRow>

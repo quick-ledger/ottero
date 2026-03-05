@@ -96,7 +96,7 @@ const AssetEditPage = () => {
                             )}
                         </div>
 
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-2">
                                 <Label htmlFor="code">Asset Code</Label>
                                 <Input
@@ -125,7 +125,7 @@ const AssetEditPage = () => {
                             />
                         </div>
 
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-2">
                                 <Label htmlFor="location">Location</Label>
                                 <Input
@@ -158,7 +158,7 @@ const AssetEditPage = () => {
                         <div className="border-t pt-4 mt-4">
                             <h3 className="font-medium mb-4">Financial Information</h3>
 
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                     <Label htmlFor="purchaseDate">Purchase Date</Label>
                                     <Input
@@ -180,7 +180,7 @@ const AssetEditPage = () => {
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-4 mt-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                                 <div className="space-y-2">
                                     <Label htmlFor="currentValue">Current Value</Label>
                                     <Input
@@ -217,7 +217,7 @@ const AssetEditPage = () => {
                             </div>
 
                             {depreciationMethod !== 'NONE' && (
-                                <div className="grid grid-cols-2 gap-4 mt-4">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                                     <div className="space-y-2">
                                         <Label htmlFor="usefulLifeYears">Useful Life (Years)</Label>
                                         <Input
