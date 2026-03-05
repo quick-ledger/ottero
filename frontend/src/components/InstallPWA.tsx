@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { X, Download } from 'lucide-react';
+import { X, Download, Share } from 'lucide-react';
 
 interface BeforeInstallPromptEvent extends Event {
     prompt: () => Promise<void>;
@@ -16,17 +16,40 @@ declare global {
 const DISMISSED_KEY = 'pwa-install-dismissed';
 const DISMISS_DURATION = 7 * 24 * 60 * 60 * 1000; // 7 days
 
+// Check if running on iOS
+const isIOS = () => {
+    return /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as { MSStream?: unknown }).MSStream;
+};
+
+// Check if already installed as standalone PWA
+const isStandalone = () => {
+    return window.matchMedia('(display-mode: standalone)').matches ||
+        (navigator as { standalone?: boolean }).standalone === true;
+};
+
 export default function InstallPWA() {
     const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
     const [showBanner, setShowBanner] = useState(false);
+    const [isIOSDevice, setIsIOSDevice] = useState(false);
 
     useEffect(() => {
+        // Don't show if already installed
+        if (isStandalone()) return;
+
         // Check if already dismissed recently
         const dismissedAt = localStorage.getItem(DISMISSED_KEY);
         if (dismissedAt && Date.now() - parseInt(dismissedAt) < DISMISS_DURATION) {
             return;
         }
 
+        // Check for iOS
+        if (isIOS()) {
+            setIsIOSDevice(true);
+            setShowBanner(true);
+            return;
+        }
+
+        // For Android/Chrome, listen for install prompt
         const handleBeforeInstallPrompt = (e: BeforeInstallPromptEvent) => {
             e.preventDefault();
             setDeferredPrompt(e);
@@ -67,15 +90,20 @@ export default function InstallPWA() {
                     <div>
                         <p className="font-medium">Install Ottero</p>
                         <p className="text-sm text-muted-foreground">
-                            Add to your home screen for quick access
+                            {isIOSDevice
+                                ? <>Tap <Share className="inline h-4 w-4" /> then "Add to Home Screen"</>
+                                : 'Add to your home screen for quick access'
+                            }
                         </p>
                     </div>
                 </div>
                 <div className="flex items-center gap-2">
-                    <Button onClick={handleInstall} size="sm">
-                        <Download className="h-4 w-4 mr-2" />
-                        Install
-                    </Button>
+                    {!isIOSDevice && (
+                        <Button onClick={handleInstall} size="sm">
+                            <Download className="h-4 w-4 mr-2" />
+                            Install
+                        </Button>
+                    )}
                     <Button variant="ghost" size="icon" onClick={handleDismiss}>
                         <X className="h-4 w-4" />
                     </Button>
